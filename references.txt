@@ -1,0 +1,5 @@
+BARRERA, E. L. et al. Modeling the anaerobic digestion of cane-molasses vinasse: Extension of the Anaerobic Digestion Model No. 1 (ADM1)
+with sulfate reduction for a very high strength and sulfate rich wastewater. Water Research, v. 71, p. 42–54, 2015. Elsevier Ltd. 
+<http://dx.doi.org/10.1016/j.watres.2014.12.026>.
+
+ROSEN, C.; JEPPSSON, U. Aspects on ADM1 Implementation within the BSM2 Framework. Technical report, , n. May, p. 1–37, 2006.
