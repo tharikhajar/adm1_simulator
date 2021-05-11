@@ -96,8 +96,6 @@ r = 0.083145
 t_base = 298.15
 t_op = 308.15
 t_inv_dif = ((1/t_base)-(1/t_op))
-v_liq = 3400 # m3
-v_gas = 300 # m3
 
 phys_par = {
     'R': r, # bar M-1 K-1
@@ -126,9 +124,38 @@ phys_par = {
     'kLa': 200, # d-1
     'Kh_co2': 0.035 * np.exp((-19410/(r*100))*t_inv_dif),
     'Kh_ch4': 0.0014 * np.exp((-14240/(r*100))*t_inv_dif),
-    'Kh_h2': (7.8*10**(-4)) * np.exp((-4180/(r*100))*t_inv_dif)
+    'Kh_h2': (7.8*10**(-4)) * np.exp((-4180/(r*100))*t_inv_dif),
+    'V': 3400, # m3
+    'Qin': 300 # m3 d-1
 }
-# %%
-phys_par
+#%%
+# Feed composition
 
-# %%
+feed = {
+    'Ssu': 0.01, # kg COD m-3
+    'Saa': 0.001, # kg COD m-3
+    'Sfa': 0.001, # kg COD m-3
+    'Sva': 0.001, # kg COD m-3
+    'Sbu': 0.001, # kg COD m-3
+    'Spro': 0.001, # kg COD m-3
+    'Sac': 0.001, # kg COD m-3
+    'Sh2': 10**(-8), # kg COD m-3
+    'Sch4': 10**(-5), # kg COD m-3
+    'Sic': 0.04, # kmole m-3
+    'Sin': 0.01, # kmole m-3
+    'Si': 0.02, # kg COD m-3
+    'Xxc': 2.0, # kg COD m-3
+    'Xch': 5.0, # kg COD m-3
+    'Xpr': 20.0, # kg COD m-3
+    'Xli': 5.0, # kg COD m-3
+    'Xsu': 0.0, # kg COD m-3
+    'Xaa': 0.01, # kg COD m-3
+    'Xfa': 0.01, # kg COD m-3
+    'Xc4': 0.01, # kg COD m-3
+    'Xpro': 0.01, # kg COD m-3
+    'Xac': 0.01, # kg COD m-3
+    'Xh2': 0.01, # kg COD m-3
+    'Xi': 25.0, # kg COD m-3
+    'Scat': 0.04, # kmole m-3
+    'San': 0.02 # kmole m-3
+}
