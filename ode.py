@@ -1,11 +1,6 @@
 # File dedicated for the implementation of the ODE model
 #%%
-import parameters.parameters_bsm2 as par
-from parameters.parameters_bsm2 import *
-import imp
 import numpy as np
-imp.reload(par)
-
 #%%
 
 # Feed Composition
@@ -396,7 +391,10 @@ def amd1_ode(initial_conditions, t, stc_par, bioch_par, phys_par):
     # Feed Composition
 
     S_su_in, S_aa_in, S_fa_in, S_va_in, S_bu_in [0:5]
-    S_aa_in, S_
+    S_pro_in, S_ac_in, S_h2_in, S_ch4_in, S_IC_in  [5:10]
+    S_IN_in, S_I_in, X_xc_in, X_ch_in, X_pr_in [10:15]
+    X_li_in, X_su_in, X_aa_in, X_fa_in, X_c4_in [15:20]
+    X_pro_in, X_ac_in, X_h2_in, X_I_in, S_cat_in, S_an_in [20:]
 
     # Variables
 
@@ -551,5 +549,3 @@ def amd1_ode(initial_conditions, t, stc_par, bioch_par, phys_par):
     for s, rho in zip(s_tup, rho_tup):
         sum_skpk += s * rho + s13_x_rho
     
-    
-        
