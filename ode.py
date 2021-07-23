@@ -1,6 +1,9 @@
 # File dedicated for the implementation of the ODE model
 #%%
 import numpy as np
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+
 #%%
 
 # Feed Composition
@@ -12,8 +15,8 @@ S_va_in = 0.001 # kg COD m-3
 S_bu_in = 0.001 # kg COD m-3
 S_pro_in = 0.001 # kg COD m-3
 S_ac_in = 0.001 # kg COD m-3
-S_h2_in = np.power(10, -8) # kg COD m-3
-S_ch4_in = np.power(10, -5) # kg COD m-3
+S_h2_in = np.power(10., -8.) # kg COD m-3
+S_ch4_in = np.power(10., -5.) # kg COD m-3
 S_IC_in = 0.04 # kmole m-3
 S_IN_in = 0.01 # kmole m-3
 S_I_in = 0.02 # kg COD m-3
@@ -70,7 +73,7 @@ S_va =  0.0123
 S_bu = 0.0140
 S_pro = 0.0176
 S_ac =  0.0893
-S_h2 =  2.5055*np.power(10, -7)
+S_h2 =  2.5055*np.power(10., -7.)
 S_ch4 = 0.0555
 S_IC = 0.0951
 S_IN = 0.0945
@@ -87,7 +90,7 @@ X_pro = 0.1011
 X_ac = 0.6772
 X_h2 =  0.2848
 X_I =  17.2162
-S_cat =  3.5659*np.power(10, -43)
+S_cat =  3.5659*np.power(10., -43.)
 S_an =  0.0052
 S_hva = 0.0123  
 S_hbu = 0.0140   
@@ -95,7 +98,7 @@ S_hpro =  0.0175
 S_hac =  0.0890   
 S_hco3 = 0.0857
 S_nh3 = 0.0019
-S_gas_h2 = 1.1032*np.power(10,-5) 
+S_gas_h2 = 1.1032*np.power(10.,-5.) 
 S_gas_ch4 = 1.6535
 S_gas_co2 = 0.0135
 Q_D = 178.4674
@@ -105,7 +108,7 @@ S_D2_D = 0
 S_D3_D = 0
 X_D4_D = 0
 X_D5_D = 0
-S_H_ion = 5.4562*np.power(10, -8)
+S_H_ion = 5.4562*np.power(10., -8.)
 
 initial_conditions = [
     S_su, #0
@@ -143,17 +146,10 @@ initial_conditions = [
     S_gas_h2,#32
     S_gas_ch4,#33
     S_gas_co2,#34
-    Q_D,#35
-    T_D,#36
-    S_D1_D, #37
-    S_D2_D, #38
-    S_D3_D, #39
-    X_D4_D, #40
-    X_D5_D, #41
-    S_H_ion #42
+    S_H_ion #35
     ] 
 
-#%%
+
 #Parameters
 
 # Stoichiometric Parameters
@@ -250,7 +246,7 @@ Kdis = 0.5 # d-1
 Khyd_ch = 10 # d-1
 Khyd_pr = 10 # d-1
 Khyd_li = 10 # d-1
-Ks_in = np.power(10, -4) # M
+Ks_in = np.power(10., -4.) # M
 Km_su=30 # d-1
 Ks_su = 0.5 # kg COD m-3
 pHul_aa = 5.5
@@ -259,20 +255,20 @@ km_aa = 50 # d-1
 Ks_aa = 0.3 # kg COD m-3
 km_fa = 6 # d-1
 Ks_fa = 0.4 # kg COD m-3
-Kih2_fa = 5 * np.power(10, -6) # kg COD m-3
+Kih2_fa = 5 * np.power(10.,-6.) # kg COD m-3
 km_c4 = 20 # d-1
 Ks_c4 = 0.2 # kg COD m-3
-Kih2_c4 = np.power (10, -5) # kg COD m-3
+Kih2_c4 = np.power (10., -5.) # kg COD m-3
 km_pro = 13 # d-1
 Ks_pro = 0.1 # kg COD m-3
-Kih2_pro = 3.5*10**(-5) # kg COD m-3
+Kih2_pro = 3.5*10**(-5.) # kg COD m-3
 km_ac = 8 # d-1
 Ks_ac = 0.15 # kg COD m-3
 Ki_nh3 = 0.0018 # M
 pHul_ac = 7
 pHll_ac = 6
 km_h2 = 35 # d-1
-Ks_h2 = 7* np.power(10, -6) # kg COD m-3
+Ks_h2 = 7* np.power(10., -6.) # kg COD m-3
 pHul_h2 = 6
 pHll_h2 = 5.0
 kdec_Xsu = 0.02 #d-1
@@ -324,34 +320,33 @@ bioch_par = [
 
 
 # Physiochemical Parameters
-r = 0.083145
-t_base = 298.15
-t_op = 308.15
-t_inv_dif = ((1/t_base)-(1/t_op))
 
-R = r # bar M-1 K-1
-Tbase = t_base # K
-Top = t_op # K
-Kw = np.exp((55900/(r*100))*t_inv_dif) # M 10-14
-Ka_va = np.power(10, -4.86) # M
-Ka_bu = np.power(10, -4.82) # M
-Ka_pro = np.power(10, -4.88) # M
-Ka_ac = np.power(10, -4.76) # M
-Ka_co2 = np.power(10, -6.35)*np.exp((7646/(r*100)*t_inv_dif)) # M
-Ka_IN = np.power(10, -9.25)*np.exp((51965/(r*100)*t_inv_dif)) # M
-kA_Bva = np.power(10, 10) # M-1 d-1
-kA_Bbu = np.power(10, 10) # M-1 d-1
-kA_Bpro = np.power(10, 10) # M-1 d-1
-kA_Bac = np.power(10, 10) # M-1 d-1
-kA_Bco2 = np.power(10, 10) # M-1 d-1
-kA_BIN = np.power(10, 10) # M-1 d-1
+R = 0.083145 # bar M-1 K-1
+Tbase = 298.15 # K
+Top = 308.15 # K
+
+t_inv_dif = ((1/Tbase)-(1/Top))
+
+Kw = np.exp((55900/(R*100))*t_inv_dif) # M 10-14
+Ka_va = np.power(10., -4.86) # M
+Ka_bu = np.power(10., -4.82) # M
+Ka_pro = np.power(10., -4.88) # M
+Ka_ac = np.power(10., -4.76) # M
+Ka_co2 = np.power(10., -6.35)*np.exp((7646/(R*100)*t_inv_dif)) # M
+Ka_IN = np.power(10., -9.25)*np.exp((51965/(R*100)*t_inv_dif)) # M
+kA_Bva = np.power(10., 10.) # M-1 d-1
+kA_Bbu = np.power(10., 10.) # M-1 d-1
+kA_Bpro = np.power(10., 10.) # M-1 d-1
+kA_Bac = np.power(10., 10.) # M-1 d-1
+kA_Bco2 = np.power(10., 10.) # M-1 d-1
+kA_BIN = np.power(10., 1.) # M-1 d-1
 Patm = 1.013 # bar
-pgas_h2o = 0.0313 * np.exp(5290*t_inv_dif) # bar
-kp = 5 * np.power(10, 4) # m3 d-1 bar-1
+pgas_h2o = 0.0313 * np.exp(5290 * t_inv_dif) # bar
+kp = 5 * np.power(10., 4.) # m3 d-1 bar-1
 kLa = 200 # d-1
-Kh_co2 = 0.035 * np.exp((-19410/(r*100))*t_inv_dif)
-Kh_ch4 = 0.0014 * np.exp((-14240/(r*100))*t_inv_dif)
-Kh_h2 = (7.8*np.power(10, -4)) * np.exp((-4180/(r*100))*t_inv_dif)
+Kh_co2 = 0.035 * np.exp((-19410 / (R * 100)) * t_inv_dif)
+Kh_ch4 = 0.0014 * np.exp((-14240/(R * 100)) * t_inv_dif)
+Kh_h2 = (7.8 * np.power(10., -4.)) * np.exp((-4180 / (R * 100)) * t_inv_dif)
 V_liq = 3400 # m3
 V_gas = 300 #m3
 Q_in = 170 # m3 d-1
@@ -386,15 +381,15 @@ phys_par = [
 ]
 
 # %%
-def amd1_ode(initial_conditions, t, stc_par, bioch_par, phys_par):
+def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_composition):
 
     # Feed Composition
 
-    S_su_in, S_aa_in, S_fa_in, S_va_in, S_bu_in [0:5]
-    S_pro_in, S_ac_in, S_h2_in, S_ch4_in, S_IC_in  [5:10]
-    S_IN_in, S_I_in, X_xc_in, X_ch_in, X_pr_in [10:15]
-    X_li_in, X_su_in, X_aa_in, X_fa_in, X_c4_in [15:20]
-    X_pro_in, X_ac_in, X_h2_in, X_I_in, S_cat_in, S_an_in [20:]
+    S_su_in, S_aa_in, S_fa_in, S_va_in, S_bu_in = feed_composition[0:5]
+    S_pro_in, S_ac_in, S_h2_in, S_ch4_in, S_IC_in = feed_composition[5:10]
+    S_IN_in, S_I_in, X_xc_in, X_ch_in, X_pr_in = feed_composition[10:15]
+    X_li_in, X_su_in, X_aa_in, X_fa_in, X_c4_in = feed_composition[15:20]
+    X_pro_in, X_ac_in, X_h2_in, X_I_in, S_cat_in, S_an_in = feed_composition[20:]
 
     # Variables
 
@@ -402,11 +397,9 @@ def amd1_ode(initial_conditions, t, stc_par, bioch_par, phys_par):
     S_ac, S_h2, S_ch4, S_IC, S_IN = initial_conditions[6:11]
     S_I, X_xc, X_ch, X_pr, X_li = initial_conditions[11:16]
     X_su, X_aa, X_fa, X_c4, X_pro = initial_conditions[16:21]
-    X_pro, X_ac, X_h2, X_I, S_cat = initial_conditions[21:26]
-    S_an, S_hva, S_hbu, S_hpro, S_hac = initial_conditions[26:31]
-    S_hco3, S_nh3, S_gas_h2, S_gas_ch4, S_gas_co2 = initial_conditions[31:36]
-    Q_D, T_D, S_D1_D, S_D2_D, SD3_D = initial_conditions[36:41]
-    X_D4_D, X_D5_D, S_H_ion = initial_conditions[41:]
+    X_ac, X_h2, X_I, S_cat, S_an = initial_conditions[21:26]
+    S_hva, S_hbu, S_hpro, S_hac, S_hco3 = initial_conditions[26:31]
+    S_nh3, S_gas_h2, S_gas_ch4, S_gas_co2, S_H_ion = initial_conditions[31:]
 
     # Stoichimetric Parameters
     
@@ -446,20 +439,20 @@ def amd1_ode(initial_conditions, t, stc_par, bioch_par, phys_par):
 
     # Hill inhibition function based on hydrogen ions
 
-    Kph_aa = np.pow(10, -((pHll_aa + pHul_aa) / 2))
-    Kph_ac = np.pow(10, -((pHll_ac + pHul_ac) / 2))
-    Kph_h2 = np.pow(10, -((pHll_h2 + pHul_h2) / 2))
+    Kph_aa = np.power(10, -((pHll_aa + pHul_aa) / 2))
+    Kph_ac = np.power(10, -((pHll_ac + pHul_ac) / 2))
+    Kph_h2 = np.power(10, -((pHll_h2 + pHul_h2) / 2))
     
-    n_aa = 3 / (pHul_aa - pHll_aa)
+    n_aa = 3 / (pHul_aa - pHll_aa) 
     n_ac = 3 / (pHul_ac - pHll_ac)
     n_h2 = 3 / (pHul_h2 - pHll_h2)
 
-    pH_n_aa = np.pow(pH, n_aa)
-    I_pH_aa = pH_n_aa / (pH_n_aa + np.pow(Kph_aa, n_aa))
-    pH_n_ac = np.pow(pH, n_ac)
-    I_pH_ac = pH_n_ac / (pH_n_ac + np.pow(Kph_ac, n_ac))
-    pH_n_h2 = np.pow(pH, n_h2)
-    I_pH_h2 = pH_n_h2 / (pH_n_h2 + np.pow(Kph_h2, n_h2))
+    pH_n_aa = np.power(pH, n_aa)
+    I_pH_aa = pH_n_aa / (pH_n_aa + np.power(Kph_aa, n_aa))
+    pH_n_ac = np.power(pH, n_ac)
+    I_pH_ac = pH_n_ac / (pH_n_ac + np.power(Kph_ac, n_ac))
+    pH_n_h2 = np.power(pH, n_h2)
+    I_pH_h2 = pH_n_h2 / (pH_n_h2 + np.power(Kph_h2, n_h2))
 
     I_IN_lim = 1 / (1 + (Ks_in / S_IN))
     I_h2_fa = 1 / (1 + (S_h2 / Kih2_fa))
@@ -509,6 +502,25 @@ def amd1_ode(initial_conditions, t, stc_par, bioch_par, phys_par):
     rho_a10 = kA_Bco2 * ( S_hco3 * (Ka_co2 + S_H_ion) - Ka_co2 * S_IC) # for Carbonic Acid and Dissolved CO2 (related) [is hco3 already hco3-?]
     rho_a11 = kA_BIN * ( S_nh3 * (Ka_IN + S_H_ion) - Ka_IN * S_IN) # for Ammonia
 
+
+    # Gas transfer rates
+    
+    pgas_h2 = S_gas_h2 * ((R * Top) / 16) # used in rho_T_8
+    pgas_ch4 = S_gas_ch4 * ((R * Top) / 64) # used in rho_T_9
+    pgas_co2 = S_gas_co2 * R * t # used in rho_T_10
+    S_co2 = S_IC - S_hco3 # used in rho_T_10
+    
+    rho_T_8 = kLa * (S_h2 - 16 * Kh_h2 * pgas_h2)
+    rho_T_9 = kLa * (S_ch4 - 64 * Kh_ch4 * pgas_ch4)
+    rho_T_10 = kLa * (S_co2 - Kh_co2 * pgas_co2)
+
+
+    Pgas = pgas_h2 + pgas_ch4 + pgas_co2 + pgas_h2o # to calculate the qgas
+
+    qgas = kp * (Pgas - Patm) * (Pgas / Patm)
+
+    
+    
     # Differential Equations Implementation
     
     # Water Phase Equations
@@ -516,10 +528,15 @@ def amd1_ode(initial_conditions, t, stc_par, bioch_par, phys_par):
 
     QV_ratio = (Q_in/V_liq)
     
-    d_Su = QV_ratio * (S_su_in - S_su) + rho2 + (1 - ffa_li) * rho4 - rho5 # 1 
-    d_Saa = QV_ratio * (S_aa_in - S_aa) + rho3 - rho6 #2
-    d_Sfa = QV_ratio * (S_fa_in - S_fa) + (ffa_li * rho4) - rho7 #3
-    d_Sva = QV_ratio * (S_va_in - S_va) + (1 - Yaa) * fva_aa * rho6 - rho8
+    dt_S_su = QV_ratio * (S_su_in - S_su) + rho2 + (1 - ffa_li) * rho4 - rho5 # 1 
+    dt_S_aa = QV_ratio * (S_aa_in - S_aa) + rho3 - rho6 #2
+    dt_S_fa = QV_ratio * (S_fa_in - S_fa) + (ffa_li * rho4) - rho7 #3
+    dt_S_va = QV_ratio * (S_va_in - S_va) + (1 - Yaa) * fva_aa * rho6 - rho8 #4
+    dt_S_bu = QV_ratio * (S_bu_in - S_bu) + (1 - Ysu) * fbu_su * rho5 + (1 - Yaa) * fbu_aa * rho6 - rho9 #5
+    dt_S_pro = QV_ratio * (S_pro_in - S_pro) + (1 - Ysu) * fpro_su * rho5 + (1-Yaa) * fpro_aa * rho6 + (1-Yc4) * 0.54 * rho8 - rho10 #6
+    dt_S_ac = QV_ratio * (S_ac_in - S_ac) + (1 - Ysu) * fac_su * rho5 + (1-Yaa) * fac_aa * rho6 + (1-Yfa) * 0.7 * rho7 + (1-Yc4) * 0.31 * rho8 + (1-Yc4) * 0.8 * rho9 + (1-Ypro) * 0.57 * rho10 - rho11 #7 
+    dt_S_h2 = QV_ratio * (S_h2_in - S_h2) + (1 - Ysu) * fh2_su * rho5 + (1-Yaa) * fh2_aa * rho6 + (1-Yfa) * 0.3 * rho7 + (1-Yc4) * 0.15 * rho8 + (1-Yc4) * 0.2 * rho9 + (1-Ypro) * 0.43 * rho10 - rho12 - rho_T_8 #8
+    dt_S_ch4 = QV_ratio * (S_ch4_in - S_ch4) + (1-Yac) * rho11 + (1-Yh2) * rho12 - rho_T_9 #9
     
     # Sum for equation 10
     # s equations
@@ -549,3 +566,74 @@ def amd1_ode(initial_conditions, t, stc_par, bioch_par, phys_par):
     for s, rho in zip(s_tup, rho_tup):
         sum_skpk += s * rho + s13_x_rho
     
+    dt_S_IC = QV_ratio * (S_IC_in - S_IC) - sum_skpk - rho_T_10 #10
+
+    #Rho summotory for aftermost equations 
+    rho_summ_13_19 = (rho13 + rho14 + rho15 + rho16 + rho17 + rho18 + rho19)
+
+    
+    dt_S_IN = QV_ratio * (S_IN_in - S_IN) - (Ysu * Nbac * rho5) + ((Naa - Yaa * Nbac) * rho6) - (Yfa * Nbac * rho7) - (Yc4 * Nbac * rho8) - (Yc4 * Nbac * rho9) - (Ypro * Nbac * rho10) - (Yac * Nbac * rho11) - (Yh2 * Nbac * rho12) + (Nbac - Nxc) * rho_summ_13_19 + ((Nxc - fxI_xc * Ni - fsI_xc * Ni - fpr_xc * Naa) * rho1) #11
+    # used the Naa over the n_aa 
+    
+    dt_S_I = QV_ratio * (S_I_in - S_I) + fsI_xc * rho1 #12
+
+    # Particulate Matter
+        
+    dt_X_c = QV_ratio * (X_xc_in - X_xc) - rho1 + rho_summ_13_19  #13 Is X_xc = X_c?
+    dt_X_ch = QV_ratio * (X_ch_in - X_ch) + (fch_xc * rho1) - rho2 #14
+    dt_X_pr = QV_ratio * (X_pr_in - X_pr) + (fpr_xc * rho1) - rho3 #15
+    dt_X_li = QV_ratio * (X_li_in - X_li ) + (fli_xc * rho1) - rho4 #16 
+    dt_X_su = QV_ratio * (X_su_in - X_su) + (Ysu * rho5) - rho13 #17
+    dt_X_aa = QV_ratio * (X_aa_in - X_aa) + (Yaa * rho6) - rho14 #18
+    dt_X_fa = QV_ratio * (X_fa_in - X_fa) + (Yfa * rho7) - rho15 #19
+    dt_X_c4 = QV_ratio * (X_c4_in - X_c4) + (Yc4 * rho8) + (Yc4 * rho9) - rho16 #20
+    dt_X_pro = QV_ratio * (X_pro_in - X_pro) + (Ypro * rho10)  - rho17 # 21
+    dt_X_ac = QV_ratio * (X_ac_in - X_ac) + (Yac * rho11) - rho18 # 22
+    dt_X_h2 = QV_ratio * (X_h2_in - X_h2) + (Yh2 * rho12) - rho19 # 23
+    dt_X_I = QV_ratio * (X_I_in - X_I) + (fxI_xc * rho1) # 24
+
+    # Cations and Anions
+    
+    dt_S_cat = QV_ratio * (S_cat_in - S_cat) #25
+    dt_S_an = QV_ratio * (S_an_in - S_an) #26
+    
+    # Ions states
+
+    dt_S_hva = -rho_a10 #27
+    dt_S_hbu = -rho_a5 #28
+    dt_S_hpro = -rho_a6 #29
+    dt_S_hac = -rho_a7 #30
+    dt_S_hco3 = -rho_a10 #31
+    dt_S_nh3 = -rho_a11 #32
+    
+    # H+ algebraic equation
+    
+    S_nh4 = S_IN - S_nh3
+    theta = S_cat + S_nh4 - S_hco3 - (S_hac / 64) - (S_hpro / 112) - (S_hbu / 160) - (S_hva / 208) - S_an
+    
+    S_H_ion_new = -(theta / 2) + .5 * np.power(np.power(theta, 2) + 4 * Kw, .5)
+
+    # Gas equations
+    V_ratio = (V_liq / V_gas)
+    
+    dt_S_gas_h2 = -((S_gas_h2 * qgas) / V_gas) + rho_T_8 * (V_ratio) #33
+    dt_S_gas_ch4 = -((S_gas_ch4 * qgas) / V_gas) + rho_T_9 * (V_ratio) #34
+    dt_S_gas_co2 = -((S_gas_co2 * qgas) / V_gas) + rho_T_10 * (V_ratio) #35
+
+    dt_S_H_ion = 0
+
+    return dt_S_su, dt_S_aa, dt_S_fa, dt_S_va, dt_S_bu, dt_S_pro, dt_S_ac, dt_S_h2, dt_S_ch4, dt_S_IC, dt_S_IN, dt_S_I, dt_X_c, dt_X_ch, dt_X_pr, dt_X_li, dt_X_su, dt_X_aa, dt_X_fa, dt_X_c4, dt_X_pro, dt_X_ac, dt_X_h2, dt_X_I, dt_S_cat, dt_S_an, dt_S_hva, dt_S_hbu, dt_S_hpro, dt_S_hac, dt_S_hco3, dt_S_nh3, dt_S_gas_h2, dt_S_gas_ch4, dt_S_gas_co2, dt_S_H_ion
+
+#%%
+# Test Run
+
+t = np.linspace(0, 500, 1000)
+results = odeint(adm1_ode, initial_conditions, t, args=(stc_par, bioch_par, phys_par, feed_composition))
+
+#%%
+fig = plt.figure(figsize=(15,10))
+plt.plot(t, results[:,1], 'r-')
+#plt.plot(t, results[:, 14], 'b.')
+fig.show()
+
+
