@@ -442,20 +442,20 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     S_nh4 = S_IN - S_nh3
     theta = S_cat + S_nh4 - S_hco3 - (S_hac / 64) - (S_hpro / 112) - (S_hbu / 160) - (S_hva / 208) - S_an
     
-    S_H_ion_new = -(theta / 2) + .5 * np.power(np.power(theta, 2) + 4 * Kw, .5)
+    S_H_ion_new = -(theta / 2.) + .5 * np.power(np.power(theta, 2.) + 4. * Kw, .5)
     
     pH = -1 * np.log10(S_H_ion_new)
     # pH = -1 * np.log10(S_H_ion)
 
     # Hill inhibition function based on hydrogen ions
 
-    Kph_aa = np.power(10, -((pHll_aa + pHul_aa) / 2))
-    Kph_ac = np.power(10, -((pHll_ac + pHul_ac) / 2))
-    Kph_h2 = np.power(10, -((pHll_h2 + pHul_h2) / 2))
+    Kph_aa = np.power(10., -((pHll_aa + pHul_aa) / 2.))
+    Kph_ac = np.power(10., -((pHll_ac + pHul_ac) / 2.))
+    Kph_h2 = np.power(10., -((pHll_h2 + pHul_h2) / 2.))
     
-    n_aa = 3 / (pHul_aa - pHll_aa) 
-    n_ac = 3 / (pHul_ac - pHll_ac)
-    n_h2 = 3 / (pHul_h2 - pHll_h2)
+    n_aa = 3. / (pHul_aa - pHll_aa) 
+    n_ac = 3. / (pHul_ac - pHll_ac)
+    n_h2 = 3. / (pHul_h2 - pHll_h2)
 
     pH_n_aa = np.power(pH, n_aa)
     I_pH_aa = pH_n_aa / (pH_n_aa + np.power(Kph_aa, n_aa))
@@ -464,11 +464,11 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     pH_n_h2 = np.power(pH, n_h2)
     I_pH_h2 = pH_n_h2 / (pH_n_h2 + np.power(Kph_h2, n_h2))
 
-    I_IN_lim = 1 / (1 + (Ks_in / S_IN))
-    I_h2_fa = 1 / (1 + (S_h2 / Kih2_fa))
-    I_h2_c4 = 1 / (1 + (S_h2 / Kih2_c4))
-    I_h2_pro = 1 / (1+ (S_h2 / Kih2_pro))
-    I_nh3 = 1 / (1+ (S_nh3 / Ki_nh3))
+    I_IN_lim = 1. / (1 + (Ks_in / S_IN))
+    I_h2_fa = 1. / (1 + (S_h2 / Kih2_fa))
+    I_h2_c4 = 1. / (1 + (S_h2 / Kih2_c4))
+    I_h2_pro = 1. / (1 + (S_h2 / Kih2_pro))
+    I_nh3 = 1. / (1 + (S_nh3 / Ki_nh3))
     
     I5 = I6 = I_pH_aa * I_IN_lim
     I7 = I_pH_aa * I_IN_lim * I_h2_fa
@@ -485,10 +485,10 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     rho3 = Khyd_pr * X_pr # Prtotein Hydrolyzation
     rho4 = Khyd_li * X_li # Lipids Hydrolyzation
     rho5 = Km_su * (S_su / (Ks_su + S_su)) * X_su * I5 # 
-    rho6 = km_aa * (S_aa * (Ks_aa + S_aa)) * X_aa * I6 #
-    rho7 = km_fa * (S_fa * (Ks_fa + S_fa)) * X_fa * I7 #
-    rho8 = km_c4 * (S_va * (Ks_c4 + S_va)) * X_c4 * (S_va / (S_bu + S_va + 1e-6)) * I8 #
-    rho9 = km_c4 * (S_bu * (Ks_c4 + S_bu)) * X_c4 * (S_bu / (S_bu + S_va + 1e-6)) * I9 #
+    rho6 = km_aa * (S_aa / (Ks_aa + S_aa)) * X_aa * I6 #
+    rho7 = km_fa * (S_fa / (Ks_fa + S_fa)) * X_fa * I7 #
+    rho8 = km_c4 * (S_va / (Ks_c4 + S_va)) * X_c4 * (S_va / (S_bu + S_va + np.power(10.,-6.))) * I8 #
+    rho9 = km_c4 * (S_bu / (Ks_c4 + S_bu)) * X_c4 * (S_bu / (S_bu + S_va + np.power(10.,-6.))) * I9 #
     rho10 = km_pro * (S_pro / (Ks_pro + S_pro)) * X_pro * I10 #
     rho11 = km_ac * (S_ac / (Ks_ac + S_ac)) * X_ac * I11 #
     rho12 = km_h2 * (S_h2 / (Ks_h2 + S_h2)) * X_h2 * I12 # 
@@ -578,7 +578,7 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     
     dt_S_IC = QV_ratio * (S_IC_in - S_IC) - sum_skpk - rho_T_10 #10
 
-    #Rho summotory for aftermost equations 
+    #Rho sum for aftermost equations 
     rho_summ_13_19 = (rho13 + rho14 + rho15 + rho16 + rho17 + rho18 + rho19)
 
     
@@ -609,7 +609,7 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     
     # Ions states
 
-    dt_S_hva = -rho_a10 #27
+    dt_S_hva = -rho_a4 #27
     dt_S_hbu = -rho_a5 #28
     dt_S_hpro = -rho_a6 #29
     dt_S_hac = -rho_a7 #30
@@ -637,142 +637,16 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
 
     return dt_S_su, dt_S_aa, dt_S_fa, dt_S_va, dt_S_bu, dt_S_pro, dt_S_ac, dt_S_h2, dt_S_ch4, dt_S_IC, dt_S_IN, dt_S_I, dt_X_c, dt_X_ch, dt_X_pr, dt_X_li, dt_X_su, dt_X_aa, dt_X_fa, dt_X_c4, dt_X_pro, dt_X_ac, dt_X_h2, dt_X_I, dt_S_cat, dt_S_an, dt_S_hva, dt_S_hbu, dt_S_hpro, dt_S_hac, dt_S_hco3, dt_S_nh3, dt_S_gas_h2, dt_S_gas_ch4, dt_S_gas_co2, dt_S_H_ion
 
-#%%
-# Test Run
-
-t = np.linspace(0, 80, int(500*24*(24/15)))
-results = odeint(adm1_ode, initial_conditions, t, args=(stc_par, bioch_par, phys_par, feed_composition))
-
-plt.plot(t, results[:,1])
 
 
-# %%
-# Benchmark results from BSM2
-
-
-BSM2_results = [
-    0.0119548297170, # S_su
-    0.0053147401716, # S_aa
-    0.0986214009308, # S_fa
-    0.0116250064639, # S_va
-    0.0132507296663, # S_bu
-    0.0157836662845, # S_pro
-    0.1976297169375, # S_ac
-    0.0000002359451, # S_h2
-    0.0550887764460, # S_ch4
-    0.1526778706263, # S_IC
-    0.1302298158037, # S_IN
-    0.3286976637215, # S_I
-    0.3086976637215, # X_xc
-    0.0279472404350, # X_Ch
-    0.1025741061067, # X_pr
-    0.0294830497073, # X_li
-    0.4201659824546, # X_su
-    1.1791717989237, # X_aa
-    0.2430353447194, # X_fa
-    0.4319211056360, # X_c4
-    0.1373059089340, # X_pro
-    0.7605626583132, # X_ac
-    0.3170229533613, # X_h2
-    25.6173953274430, # X_I
-    0.0400000000000, # S_cat
-    0.0200000000000, # S_an
-    0.0115962470726, # S_hva
-    0.0132208262485, # S_hbu
-    0.0157427831916, # S_hpro
-    0.1972411554365, # S_hac
-    0.1427774793921, # S_hco3
-    0.0040909284584, # S_nh3
-    0.0000102410356, # S_gas_h2
-    1.6256072099814, # S_gas_ch4
-    0.0141505346784, # S_gas_co2
-    np.power(10, -7.4655377698929) # H+
-]
 
 #%%
 # Turning results from array to dict
 
-def array_to_dict(results):
-    '''list -> (dict)
 
-    Transform the list of results in a dictionary with the names of the results.
-    
-    '''
-    keys = [
-        'Monosaccharides',
-        'Aminoacids',
-        'Fatty Acids',
-        'Valeric Acid',
-        'Butiric Acid',
-        'Propionic Acid',
-        'Acetic Acid',
-        'Hydrogen (Liquid)',
-        'Methane (Liquid)',
-        'Inorganic Carbon',
-        'Inorganic Nitrogen',
-        'Soluble Inerts',
-        'Composite Material',
-        'Carbohydrates',
-        'Proteins',
-        'Lipids',
-        'Monosaccharide Consumers',
-        'Aminoacids Consumers',
-        'Fatty Acids Consumers',
-        'But/Val Acids Consumers',
-        'Propionic Acid Consumers',
-        'Acetic Acid Consumers',
-        'Hydrogen Consumers',
-        'Composite Inerts',
-        'Cations',
-        'Anions',
-        'Valeric Conjugate',
-        'Butiric Conjugate',
-        'Propionic Conjugate',
-        'Acetic Conjugate',
-        'Carbonic Acid',
-        'Ammonia',
-        'Hydrogen (Gas)',
-        'Methane (Gas)',
-        'Carbon Dioxide (Gas)'
-        'Protons'
-    ]
 
-    # Transposing results
-    
 
-    if type(results) == 'numpy.ndarray':
 
-        results = np.transpose(results)
 
-    zip_for_dict = zip(keys, results)
-    results_dict = dict(zip_for_dict)
 
-    return results_dict
-
-results_dict = array_to_dict(results)
-bsm2_dict = array_to_dict(BSM2_results)
-
-bsm2_dict
-
-#%%
-
-def compare(our_lst, other_lst):
-    
-    compare_list = []
-
-    for our_value, their_value in zip(our_lst[-1,:], other_lst):
-        
-        compare_list.append(abs(their_value - our_value) / max([their_value, our_value]))
-    
-    return compare_list
-
-#%%
-compare_list = compare(results, BSM2_results)
-
-results[-1,1]
-#%%
-compare_dict = array_to_dict(compare_list)
-compare_dict
-#%%
-results[-1,0]
 
