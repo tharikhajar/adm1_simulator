@@ -443,7 +443,7 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     S_co2 = S_IC - S_hco3
     theta = S_cat + S_nh4 - S_hco3 - (S_hac / 64) - (S_hpro / 112) - (S_hbu / 160) - (S_hva / 208) - S_an
     
-    S_H_ion_new = -(theta / 2.) + .5 * np.power(np.power(theta, 2.) + 4. * Kw, .5)
+    S_H_ion_new = -1 * (theta / 2.) + (.5 * np.power(np.power(theta, 2.) + 4. * Kw, .5))
     
     pH = -1 * np.log10(S_H_ion_new)
     # pH = -1 * np.log10(S_H_ion)
