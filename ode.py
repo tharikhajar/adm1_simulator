@@ -178,7 +178,7 @@ Cfa = 0.0217 # kmole C (kg COD)-1
 fh2_su = 0.19
 fbu_su = 0.13
 fpro_su = 0.27
-fac_su = 0.14
+fac_su = 0.41
 Nbac = 0.08/14 # # kmole N (kg COD)-1
 Cbu = 0.025 # kmole C (kg COD)-1
 Cpro = 0.0268 # kmole C (kg COD)-1
@@ -261,7 +261,7 @@ Ks_fa = 0.4 # kg COD m-3
 Kih2_fa = 5 * np.power(10.,-6.) # kg COD m-3
 km_c4 = 20 # d-1
 Ks_c4 = 0.2 # kg COD m-3
-Kih2_c4 = np.power (10., -5.) # kg COD m-3
+Kih2_c4 = np.power(10., -5.) # kg COD m-3
 km_pro = 13 # d-1
 Ks_pro = 0.1 # kg COD m-3
 Kih2_pro = 3.5*10**(-5.) # kg COD m-3
@@ -415,7 +415,7 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     Cac, Cbac, Ysu, fh2_aa, fva_aa = stc_par[25:30]
     fbu_aa, fpro_aa, fac_aa, Cva, Yaa = stc_par[30:35]
     Yfa, Yc4, Ypro, Cch, Yac = stc_par[35:40]
-    yh2 = stc_par[40:41] 
+    yh2 = stc_par[40] 
 
 
     # Biochemical Parameters
@@ -440,6 +440,7 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     # pH Inhibition
 
     S_nh4 = S_IN - S_nh3
+    S_co2 = S_IC - S_hco3
     theta = S_cat + S_nh4 - S_hco3 - (S_hac / 64) - (S_hpro / 112) - (S_hbu / 160) - (S_hva / 208) - S_an
     
     S_H_ion_new = -(theta / 2.) + .5 * np.power(np.power(theta, 2.) + 4. * Kw, .5)
@@ -517,8 +518,8 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     
     pgas_h2 = S_gas_h2 * ((R * Top) / 16) # used in rho_T_8
     pgas_ch4 = S_gas_ch4 * ((R * Top) / 64) # used in rho_T_9
-    pgas_co2 = S_gas_co2 * R * t # used in rho_T_10
-    S_co2 = S_IC - S_hco3 # used in rho_T_10
+    pgas_co2 = S_gas_co2 * R * Top # used in rho_T_10
+    # S_co2 = S_IC - S_hco3 # Moved to the top so that it happens before pH calculation
     
     rho_T_8 = kLa * (S_h2 - 16 * Kh_h2 * pgas_h2)
     rho_T_9 = kLa * (S_ch4 - 64 * Kh_ch4 * pgas_ch4)

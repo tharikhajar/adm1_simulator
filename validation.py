@@ -4,6 +4,7 @@ from scipy.integrate import odeint
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
+import plotly.graph_objects as go
 
 import ode, support_functions, parameters.parameters_bsm2
 from importlib import reload
@@ -47,9 +48,8 @@ df_compare['Bins'] = pd.cut(
     [10**(-10), 0.0001, 0.001, 0.01, 0.1, 1, 10],
     labels = ['< 0.01%', '0.01 - 0.1%', '0.1 - 1%', '1 - 10%', '10 - 100%', '> 100%']
     )
-df_compare
 
-
+# Plotting a bar chart to visualize the error by variable
 fig = px.bar(
     df_compare.sort_values('Values', ascending=False),
     x='Values',
@@ -63,3 +63,46 @@ fig.write_html('results_validation.html')
 
 
 # %%
+results_dict = array_to_dict(np.transpose(results))
+results_dict.keys()
+
+#%%
+# Setting up an easy way to go through the time series of every state
+
+df_results = pd.DataFrame(data=results_dict)
+df_results['Time'] = t
+
+#%%
+# Normalizing because couldn't get the y axis to rescale properly to fit every variable
+
+df_results_normalized = pd.DataFrame()
+
+for col in df_results.columns[:-1]:
+    df_results_normalized[col] = df_results[col] / max(df_results[col])
+
+df_results_normalized
+df_results_normalized['Time'] = t
+
+
+#%%
+# Animation in plotly works with data in the long version
+
+df_results_molten = pd.melt(
+    df_results_normalized, id_vars='Time',
+    value_vars=df_results_normalized.columns[:-1],
+    var_name='Variable', value_name='Values'
+    )
+
+#%%
+# Creating and exporting the chart
+
+fig_animated = px.scatter(
+    df_results_molten, x='Time',
+    y='Values', animation_frame='Variable',
+    range_x=[0, max(t)], range_y=[0, 1.1]
+)
+
+fig_animated.write_html('timeseries.html')
+
+
+#

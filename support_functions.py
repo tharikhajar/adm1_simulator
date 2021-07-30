@@ -1,6 +1,6 @@
 
 # Covnert simulation results from array to dict
-
+import numpy as np
 def array_to_dict(results):
     '''list -> (dict)
 
@@ -42,7 +42,7 @@ def array_to_dict(results):
         'Ammonia',
         'Hydrogen (Gas)',
         'Methane (Gas)',
-        'Carbon Dioxide (Gas)'
+        'Carbon Dioxide (Gas)',
         'Protons'
     ]
 
@@ -52,6 +52,7 @@ def array_to_dict(results):
     if type(results) == 'numpy.ndarray':
 
         results = np.transpose(results)
+
 
     zip_for_dict = zip(keys, results)
     results_dict = dict(zip_for_dict)
