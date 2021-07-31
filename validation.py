@@ -28,7 +28,7 @@ def compare(our_lst, other_lst):
     return compare_list
 
 # Running the simulation
-t = np.linspace(0, 80, int(500*24*(24/15)))
+t = np.linspace(0, 150, int(500*24*(24/15)))
 results = odeint(
     adm1_ode, initial_conditions, 
     t, args=(stc_par, bioch_par, phys_par, feed_composition)
@@ -118,6 +118,8 @@ fig_animated.write_html('timeseries.html')
 
 
 #
+# %%
+
 # %%
 
 # %%

@@ -446,7 +446,7 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     S_H_ion = -1 * (theta / 2.) + (.5 * np.power(np.power(theta, 2.) + 4. * Kw, .5))
     
     pH = -1 * np.log10(S_H_ion)
-    # pH = -1 * np.log10(S_H_ion)
+    
 
     # Hill inhibition function based on hydrogen ions
 
