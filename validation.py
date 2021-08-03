@@ -51,9 +51,6 @@ def results_to_df(results, label, t, compare_switch=True):
         reload(parameters.parameters_bsm2)
         from parameters.parameters_bsm2 import BSM2_results
 
-        print(df.tail(1).values[0][:-10])
-        print(BSM2_results)
-
         compare_array = compare(df.tail(1).values[0][:-10], BSM2_results)
         compare_dict = array_to_dict(compare_array)
         df_compare = pd.DataFrame(data={
@@ -169,8 +166,10 @@ results_ivp_full = solve_ivp(
 df_odeint, df_compare = results_to_df(results=np.transpose(results_odeint), label='odeint', t=t)
 
 #%%
-plot_compare(df_compare, 'odeint')
-plot_all_time_series(df_odeint, 'odeint')
+label = 'odeint_kph_inhib'
+plot_compare(df_compare, label=label)
+plot_all_time_series(df_odeint, label=label)
+plot_pressure(df_odeint, label=label)
 #%%
 
 
@@ -182,7 +181,7 @@ df_odeint.columns[-1]
 
 # %%
 
-plot_pressure(df_odeint, label='odeint')
+
 #%%
 
 df_odeint.iloc[-1,:]

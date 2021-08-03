@@ -453,6 +453,7 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     Kph_aa = np.power(10., -((pHll_aa + pHul_aa) / 2.))
     Kph_ac = np.power(10., -((pHll_ac + pHul_ac) / 2.))
     Kph_h2 = np.power(10., -((pHll_h2 + pHul_h2) / 2.))
+
     # Kph_aa = (pHll_aa + pHul_aa) / 2.
     # Kph_ac = (pHll_ac + pHul_ac) / 2.
     # Kph_h2 = (pHll_h2 + pHul_h2) / 2.
@@ -461,12 +462,12 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     n_ac = 3. / (pHul_ac - pHll_ac)
     n_h2 = 3. / (pHul_h2 - pHll_h2)
 
-    pH_n_aa = np.power(pH, n_aa)
-    I_pH_aa = pH_n_aa / (pH_n_aa + np.power(Kph_aa, n_aa))
-    pH_n_ac = np.power(pH, n_ac)
-    I_pH_ac = pH_n_ac / (pH_n_ac + np.power(Kph_ac, n_ac))
-    pH_n_h2 = np.power(pH, n_h2)
-    I_pH_h2 = pH_n_h2 / (pH_n_h2 + np.power(Kph_h2, n_h2))
+    KpH_n_aa = np.power(Kph_aa, n_aa)
+    I_pH_aa = KpH_n_aa / (KpH_n_aa + np.power(S_H_ion, n_aa))
+    KpH_n_ac = np.power(Kph_ac, n_ac)
+    I_pH_ac = KpH_n_ac / (KpH_n_ac + np.power(S_H_ion, n_ac))
+    KpH_n_h2 = np.power(Kph_h2, n_h2)
+    I_pH_h2 = KpH_n_h2 / (KpH_n_h2 + np.power(S_H_ion, n_h2))
 
     I_IN_lim = 1. / (1 + (Ks_in / S_IN))
     I_h2_fa = 1. / (1 + (S_h2 / Kih2_fa))
