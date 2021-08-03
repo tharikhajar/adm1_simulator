@@ -28,6 +28,126 @@ def compare(our_lst, other_lst):
     
     return compare_list
 
+def results_to_df(results, label, t, compare_switch=True):
+    '''
+    results: 2-dimensional array containing the simulation results
+    label: label to identify the simulation (e.g. odeint, ivp)
+    t: one dimensional array with the simulation timesteps
+    compare: whether to return an additional DataFrame with comparisom with BSM2 results
+
+    returns one or two DataFrames (depending on compare switch) 
+    '''
+
+    results_dict = array_to_dict(results)
+    df = pd.DataFrame(data=results_dict)
+    df = pH_post_calculation(df)
+    df = gas_pressure_post_calculation(df)
+    df['Time (days)'] = t
+
+    if compare_switch == True:
+
+        import parameters.parameters_bsm2
+        from importlib import reload
+        reload(parameters.parameters_bsm2)
+        from parameters.parameters_bsm2 import BSM2_results
+
+        print(df.tail(1).values[0][:-10])
+        print(BSM2_results)
+
+        compare_array = compare(df.tail(1).values[0][:-10], BSM2_results)
+        compare_dict = array_to_dict(compare_array)
+        df_compare = pd.DataFrame(data={
+            'Variables': compare_dict.keys(),
+            f'Relative Error ({label})': compare_dict.values()
+        })
+
+        df_compare['Bins (odeint)'] = pd.cut(
+            df_compare[f'Relative Error ({label})'],
+            [10**(-10), 0.0001, 0.001, 0.01, 0.1, 1, 10],
+            labels = ['< 0.01%', '0.01 - 0.1%', '0.1 - 1%', '1 - 10%', '10 - 100%', '> 100%']
+            )
+
+        return df, df_compare
+
+    return df
+
+def plot_all_time_series(df, label=''):
+
+    # Normalizing because couldn't get the y axis to rescale properly to fit every variable
+    df_normalized = pd.DataFrame()
+
+    for col in df.columns[:-1]:
+        df_normalized[col] = df[col] / max(df[col])
+
+    time_column_name = df.columns[-1]
+
+    df_normalized[time_column_name] = df[time_column_name]
+
+    # Animation in plotly works with data in the long version
+    df_results_molten = pd.melt(
+        df_normalized, id_vars=time_column_name,
+        value_vars=df_normalized.columns[:-1],
+        var_name='Variable', value_name='Values'
+        )
+    
+    fig_animated = px.scatter(
+        df_results_molten, x=time_column_name,
+        y='Values', animation_frame='Variable',
+        range_x=[0, max(t)], range_y=[0, 1.1]
+        )
+
+    fig_animated.write_html(f'validation_charts/timeseries_{label}.html')
+
+def plot_compare(df, label=''):
+
+    x_values = df.columns[1]
+    y_values = df.columns[0]
+    color_values = df.columns[2]
+
+    df['Data Labels'] = (round(df[x_values] * 100, 1)).astype(str) + '%'
+
+    fig = px.bar(
+        df.sort_values('Relative Error (odeint)', ascending=True),
+        x=x_values,
+        y=y_values,
+        orientation='h',
+        color=color_values,
+        text='Data Labels'
+        )
+
+    fig.write_html(f'validation_charts/results_validation_{label}.html')
+
+
+def plot_pressure(df, label=''):
+
+
+    fig = go.Figure()
+
+    pressure_states = ['Pressure (H2)', 'Pressure (CH4)', 'Pressure (CO2)', 'Pressure (H20)']
+    pressure_colors = ['#264653', '#2a9d8f', '#f4a261', '#e76f51']
+
+    for state, color in zip(pressure_states, pressure_colors):
+        fig.add_trace(go.Scatter(
+            x=df['Time (days)'], y=df[state],
+            mode='lines', stackgroup='one',
+            groupnorm='percent', name=state,
+            line=dict(
+                width=0.5, color=color
+            )
+        ))
+    fig.update_layout(
+        showlegend=True,
+        xaxis_type='category',
+        xaxis=dict(
+          dtick=len(df[df.columns[-1]]) / 10
+        ),
+        yaxis=dict(
+            type='linear',
+            range=[1, 100],
+            ticksuffix='%'))
+
+    fig.write_html(f'validation_charts/pressure_{label}.html')
+
 #%%
 
 # Running the simulation
@@ -44,156 +164,25 @@ results_ivp_full = solve_ivp(
     y0=initial_conditions,  method='RK45',
     args=(stc_par, bioch_par, phys_par, feed_composition)
 )
-#%%
-# Putting both results in the same shape
-
-results_odeint = np.transpose(results_odeint)
-t_ivp = results_ivp_full.t
-results_ivp = results_ivp_full.y
 
 #%%
-
-results_ivp_dict = array_to_dict(results_ivp)
-results_odeint_dict = array_to_dict(results_odeint)
-#%%
-
-df_ivp = pd.DataFrame(data=results_ivp_dict)
-df_odeint = pd.DataFrame(data=results_odeint_dict)
-
-df_ivp = pH_post_calculation(df_ivp)
-df_odeint = pH_post_calculation(df_odeint)
-
-df_ivp['Time (days)'] = t_ivp
-df_odeint['Time (days)'] = t
-
-
-compare_ivp = compare(df_ivp.tail(1).values[0][:-4], BSM2_results)
-compare_odeint = compare(df_odeint.tail(1).values[0][:-4], BSM2_results)
-
-compare_ivp_dict = array_to_dict(compare_ivp)
-compare_odeint_dict = array_to_dict(compare_odeint)
-
-df_compare = pd.DataFrame(data={
-    'Variables': compare_ivp_dict.keys(),
-    'Error (ivp)': compare_ivp_dict.values(),
-    'Error (odeint)': compare_odeint_dict.values()
-})
-
-df_compare
-
-
-df_compare
-#%%
-df_compare['Bins (odeint)'] = pd.cut(
-    df_compare['Error (odeint)'],
-    [10**(-10), 0.0001, 0.001, 0.01, 0.1, 1, 10],
-    labels = ['< 0.01%', '0.01 - 0.1%', '0.1 - 1%', '1 - 10%', '10 - 100%', '> 100%']
-    )
-
+df_odeint, df_compare = results_to_df(results=np.transpose(results_odeint), label='odeint', t=t)
 
 #%%
-# Plotting a bar chart to visualize the error by variable
-fig = px.bar(
-    df_compare.sort_values('Error (odeint)', ascending=True),
-    x='Error (odeint)',
-    y='Variables',
-    orientation='h',
-    color='Bins (odeint)'
-    )
-
-fig.write_html('results_validation.html')
-
-
+plot_compare(df_compare, 'odeint')
+plot_all_time_series(df_odeint, 'odeint')
 #%%
-# Normalizing because couldn't get the y axis to rescale properly to fit every variable
-
-df_results_normalized = pd.DataFrame()
-
-for col in df_results.columns:
-    df_results_normalized[col] = df_results[col] / max(df_results[col])
-
-df_results_normalized['Time'] = t
-df_results_normalized
-
-#%%
-# Animation in plotly works with data in the long version
-
-df_results_molten = pd.melt(
-    df_results_normalized, id_vars='Time',
-    value_vars=df_results_normalized.columns[:-1],
-    var_name='Variable', value_name='Values'
-    )
 
 
-#%%
-# Creating and exporting the chart
-
-fig_animated = px.scatter(
-    df_results_molten, x='Time',
-    y='Values', animation_frame='Variable',
-    range_x=[0, max(t)], range_y=[0, 1.1]
-)
-
-fig_animated.write_html('timeseries.html')
+df_odeint.columns[-1]
 
 
-#
 # %%
 # pressure post relative chart
 
-df = gas_pressure_post_calculation(df_odeint)
-
-fig = go.Figure()
-
-pressure_states = ['Pressure (H2)', 'Pressure (CH4)', 'Pressure (CO2)', 'Pressure (H20)']
-pressure_colors = ['#264653', '#2a9d8f', '#f4a261', '#e76f51']
-
-for state, color in zip(pressure_states, pressure_colors):
-    fig.add_trace(go.Scatter(
-        x=df['Time (days)'], y=df[state],
-        mode='lines', stackgroup='one',
-        groupnorm='percent', name=state,
-        line=dict(
-            width=0.5, color=color
-        )
-    ))
-
-fig.update_layout(
-    showlegend=True,
-    xaxis_type='category',
-    yaxis=dict(
-        type='linear',
-        range=[1, 100],
-        ticksuffix='%'))
-
-fig.write_html('pressure.html')
-# %%
-# Pressure absolute
-
-fig = go.Figure()
-
-pressure_states = ['Pressure (H2)', 'Pressure (CH4)', 'Pressure (CO2)', 'Pressure (H20)']
-pressure_colors = ['#264653', '#2a9d8f', '#f4a261', '#e76f51']
-
-for state, color in zip(pressure_states, pressure_colors):
-    fig.add_trace(go.Scatter(
-        x=df['Time (days)'], y=df[state],
-        mode='lines', stackgroup='one',
-        name=state,
-        line=dict(
-            width=0.5, color=color
-        )
-    ))
-
-fig.update_layout(
-    showlegend=True,
-    xaxis_type='category',
-)
-
-fig.write_html('pressure_absolute.html')
 # %%
 
-# Taking a look at gas flow rate
-plt.plot(df['Time (days)'], df['Gas Flow'])
-plt.show()
-# %%
+plot_pressure(df_odeint, label='odeint')
+#%%
+
+df_odeint.iloc[-1,:]
