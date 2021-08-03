@@ -385,7 +385,7 @@ phys_par = [
 ]
 
 # %%
-def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_composition):
+def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_composition):
 
     # Feed Composition
 
@@ -397,7 +397,7 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
 
     # Variables
 
-    S_su, S_aa, S_fa, S_va, S_bu, S_pro = initial_conditions[0:6] #faltou o S_aa #1
+    S_su, S_aa, S_fa, S_va, S_bu, S_pro = initial_conditions[0:6]
     S_ac, S_h2, S_ch4, S_IC, S_IN = initial_conditions[6:11]
     S_I, X_xc, X_ch, X_pr, X_li = initial_conditions[11:16]
     X_su, X_aa, X_fa, X_c4, X_pro = initial_conditions[16:21]
@@ -453,6 +453,9 @@ def adm1_ode(initial_conditions, t, stc_par, bioch_par, phys_par, feed_compositi
     Kph_aa = np.power(10., -((pHll_aa + pHul_aa) / 2.))
     Kph_ac = np.power(10., -((pHll_ac + pHul_ac) / 2.))
     Kph_h2 = np.power(10., -((pHll_h2 + pHul_h2) / 2.))
+    # Kph_aa = (pHll_aa + pHul_aa) / 2.
+    # Kph_ac = (pHll_ac + pHul_ac) / 2.
+    # Kph_h2 = (pHll_h2 + pHul_h2) / 2.
     
     n_aa = 3. / (pHul_aa - pHll_aa) 
     n_ac = 3. / (pHul_ac - pHll_ac)
