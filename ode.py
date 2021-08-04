@@ -346,13 +346,13 @@ kA_BIN = np.power(10., 10.) # M-1 d-1
 Patm = 1.013 # bar
 pgas_h2o = 0.0313 * np.exp(5290 * t_inv_dif) # bar
 kp = 5 * np.power(10., 4.) # m^3 d-1 bar-1
-kLa = 200 # d-1
+kLa = 200. # d-1
 Kh_co2 = 0.035 * np.exp((-19410 / (R * 100)) * t_inv_dif)
 Kh_ch4 = 0.0014 * np.exp((-14240/(R * 100)) * t_inv_dif)
 Kh_h2 = (7.8 * np.power(10., -4.)) * np.exp((-4180 / (R * 100)) * t_inv_dif)
-V_liq = 3400 # m^3
-V_gas = 300 # m^3
-Q_in = 170 # m^3 d-1
+V_liq = 3400. # m^3
+V_gas = 300. # m^3
+Q_in = 170. # m^3 d-1
 
 
 phys_par = [
@@ -383,6 +383,8 @@ phys_par = [
     V_gas, #24
     Q_in #25
 ]
+
+phys_par
 
 # %%
 def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_composition):
@@ -437,26 +439,19 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     kA_BIN, Patm, pgas_h2o, kp, kLa = phys_par[15:20]
     Kh_co2, Kh_ch4, Kh_h2, V_liq, V_gas, Q_in = phys_par[20:]
 
-    # pH Inhibition
+    # H+ concentration
 
     S_nh4 = S_IN - S_nh3
     S_co2 = S_IC - S_hco3
     theta = S_cat + S_nh4 - S_hco3 - (S_hac / 64) - (S_hpro / 112) - (S_hbu / 160) - (S_hva / 208) - S_an
     
-    S_H_ion = -1 * (theta / 2.) + (.5 * np.power(np.power(theta, 2.) + 4. * Kw, .5))
-    
-    pH = -1 * np.log10(S_H_ion)
-    
+    S_H_ion = -1 * (theta / 2.) + (.5 * np.sqrt(np.power(theta, 2.) + 4. * Kw))
 
-    # Hill inhibition function based on hydrogen ions
+    # Hill inhibition function based on hydrogen ions (pH Inhibition)
 
     Kph_aa = np.power(10., -((pHll_aa + pHul_aa) / 2.))
     Kph_ac = np.power(10., -((pHll_ac + pHul_ac) / 2.))
     Kph_h2 = np.power(10., -((pHll_h2 + pHul_h2) / 2.))
-
-    # Kph_aa = (pHll_aa + pHul_aa) / 2.
-    # Kph_ac = (pHll_ac + pHul_ac) / 2.
-    # Kph_h2 = (pHll_h2 + pHul_h2) / 2.
     
     n_aa = 3. / (pHul_aa - pHll_aa) 
     n_ac = 3. / (pHul_ac - pHll_ac)
@@ -486,17 +481,17 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     # Biochemical process rates 
 
     rho1 = Kdis * X_xc # Particulate matter disintegration
-    rho2 = Khyd_ch * X_ch # Carbohydrate Hydrolyzation
-    rho3 = Khyd_pr * X_pr # Prtotein Hydrolyzation
-    rho4 = Khyd_li * X_li # Lipids Hydrolyzation
-    rho5 = Km_su * (S_su / (Ks_su + S_su)) * X_su * I5 # 
-    rho6 = km_aa * (S_aa / (Ks_aa + S_aa)) * X_aa * I6 #
-    rho7 = km_fa * (S_fa / (Ks_fa + S_fa)) * X_fa * I7 #
-    rho8 = km_c4 * (S_va / (Ks_c4 + S_va)) * X_c4 * (S_va / (S_bu + S_va + np.power(10.,-6.))) * I8 #
-    rho9 = km_c4 * (S_bu / (Ks_c4 + S_bu)) * X_c4 * (S_bu / (S_bu + S_va + np.power(10.,-6.))) * I9 #
-    rho10 = km_pro * (S_pro / (Ks_pro + S_pro)) * X_pro * I10 #
-    rho11 = km_ac * (S_ac / (Ks_ac + S_ac)) * X_ac * I11 #
-    rho12 = km_h2 * (S_h2 / (Ks_h2 + S_h2)) * X_h2 * I12 # 
+    rho2 = Khyd_ch * X_ch # Carbohydrate Hydrolysis
+    rho3 = Khyd_pr * X_pr # Prtotein Hydrolysis
+    rho4 = Khyd_li * X_li # Lipids Hydrolysis
+    rho5 = Km_su * (S_su / (Ks_su + S_su)) * X_su * I5 # Monosaccharides Comsumption
+    rho6 = km_aa * (S_aa / (Ks_aa + S_aa)) * X_aa * I6 # Aminoacids Comsumption
+    rho7 = km_fa * (S_fa / (Ks_fa + S_fa)) * X_fa * I7 # Fatty Acids Comsumption
+    rho8 = km_c4 * (S_va / (Ks_c4 + S_va)) * X_c4 * (S_va / (S_bu + S_va + np.power(10.,-6.))) * I8 # Valeric Comsumption
+    rho9 = km_c4 * (S_bu / (Ks_c4 + S_bu)) * X_c4 * (S_bu / (S_bu + S_va + np.power(10.,-6.))) * I9 # Butyric Comsumption
+    rho10 = km_pro * (S_pro / (Ks_pro + S_pro)) * X_pro * I10 # Propionic Comsumption
+    rho11 = km_ac * (S_ac / (Ks_ac + S_ac)) * X_ac * I11 # Acetic Comsumption
+    rho12 = km_h2 * (S_h2 / (Ks_h2 + S_h2)) * X_h2 * I12 # Molecular Hydrogen Comsumption
     rho13 = kdec_Xsu * X_su # Decay of micoorganisms consumers of monosaccharides 
     rho14 = kdec_Xaa * X_aa # Decay of micoorganisms consumers of aminoacids
     rho15 = kdec_Xfa * X_fa # Decay of micoorganisms consumers of fat acids
@@ -506,15 +501,13 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     rho19 = kdec_Xh2 * X_h2 # Decay of micoorganisms consumers of hydrogen
 
 
-
-
-    # Acid-base rates  CHECK DOCUMENT ION SIGNALS ON EQUATIONS
+    # Acid-base rates 
     
     rho_a4 = kA_Bva * ( S_hva * (Ka_va + S_H_ion) - Ka_va * S_va) # for Valeric Acid
-    rho_a5 = kA_Bbu * ( S_hbu * (Ka_bu + S_H_ion) - Ka_bu * S_bu) # for Butiric Acid
+    rho_a5 = kA_Bbu * ( S_hbu * (Ka_bu + S_H_ion) - Ka_bu * S_bu) # for Butyric Acid
     rho_a6 = kA_Bpro * ( S_hpro * (Ka_pro + S_H_ion) - Ka_pro * S_pro) # for Propionic Acid
     rho_a7 = kA_Bac * ( S_hac * (Ka_ac + S_H_ion) - Ka_ac * S_ac) # for Acetic Acid
-    rho_a10 = kA_Bco2 * ( S_hco3 * (Ka_co2 + S_H_ion) - Ka_co2 * S_IC) # for Carbonic Acid and Dissolved CO2 (related) [is hco3 already hco3-?]
+    rho_a10 = kA_Bco2 * ( S_hco3 * (Ka_co2 + S_H_ion) - Ka_co2 * S_IC) # for Carbonic Acid
     rho_a11 = kA_BIN * ( S_nh3 * (Ka_IN + S_H_ion) - Ka_IN * S_IN) # for Ammonia
 
 
@@ -523,20 +516,17 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     pgas_h2 = S_gas_h2 * ((R * Top) / 16) # used in rho_T_8
     pgas_ch4 = S_gas_ch4 * ((R * Top) / 64) # used in rho_T_9
     pgas_co2 = S_gas_co2 * R * Top # used in rho_T_10
-    # S_co2 = S_IC - S_hco3 # Moved to the top so that it happens before pH calculation
     
-    rho_T_8 = kLa * (S_h2 - 16 * Kh_h2 * pgas_h2)
-    rho_T_9 = kLa * (S_ch4 - 64 * Kh_ch4 * pgas_ch4)
-    rho_T_10 = kLa * (S_co2 - Kh_co2 * pgas_co2)
+    rho_T_8 = kLa * (S_h2 - 16 * Kh_h2 * pgas_h2) # Molecular Hydrogen
+    rho_T_9 = kLa * (S_ch4 - 64 * Kh_ch4 * pgas_ch4) # Methane
+    rho_T_10 = kLa * (S_co2 - Kh_co2 * pgas_co2) # Carbon Dioxide
 
+    Pgas = pgas_h2 + pgas_ch4 + pgas_co2 + pgas_h2o # Headspace Pressure
 
-    Pgas = pgas_h2 + pgas_ch4 + pgas_co2 + pgas_h2o # to calculate the qgas
-
-    qgas = kp * (Pgas - Patm) * (Pgas / Patm)
+    qgas = kp * (Pgas - Patm) * (Pgas / Patm) # Gas flow rate
 
     
-    
-    # Differential Equations Implementation
+    # Differential Equations
     
     # Water Phase Equations
     # Soluble Matter
@@ -572,29 +562,28 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     
     s13_x_rho = s13 * (rho13 + rho14 + rho15 + rho16 + rho17 + rho18 + rho19)
 
-    s_tup = (s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12)
+    s_list = [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12]
     
-    rho_tup = (rho1, rho2, rho3, rho4, rho5, rho6, rho7, rho8, rho9, rho10, rho11, rho12)
+    rho_list = [rho1, rho2, rho3, rho4, rho5, rho6, rho7, rho8, rho9, rho10, rho11, rho12]
     
     sum_skpk = 0
     
-    for s, rho in zip(s_tup, rho_tup):
+    for s, rho in zip(s_list, rho_list):
         sum_skpk += s * rho + s13_x_rho
     
     dt_S_IC = QV_ratio * (S_IC_in - S_IC) - sum_skpk - rho_T_10 #10
 
-    #Rho sum for aftermost equations 
-    rho_summ_13_19 = (rho13 + rho14 + rho15 + rho16 + rho17 + rho18 + rho19)
-
+    #Rho sum for dt_X_c & dr_S_IN equations (biomass decay -> particulate matter & Inorganic Nitrogen) 
+    rho_sum_13_19 = rho13 + rho14 + rho15 + rho16 + rho17 + rho18 + rho19
     
-    dt_S_IN = QV_ratio * (S_IN_in - S_IN) - (Ysu * Nbac * rho5) + ((Naa - Yaa * Nbac) * rho6) - (Yfa * Nbac * rho7) - (Yc4 * Nbac * rho8) - (Yc4 * Nbac * rho9) - (Ypro * Nbac * rho10) - (Yac * Nbac * rho11) - (Yh2 * Nbac * rho12) + (Nbac - Nxc) * rho_summ_13_19 + ((Nxc - fxI_xc * Ni - fsI_xc * Ni - fpr_xc * Naa) * rho1) #11
+    dt_S_IN = QV_ratio * (S_IN_in - S_IN) - (Ysu * Nbac * rho5) + ((Naa - Yaa * Nbac) * rho6) - (Yfa * Nbac * rho7) - (Yc4 * Nbac * rho8) - (Yc4 * Nbac * rho9) - (Ypro * Nbac * rho10) - (Yac * Nbac * rho11) - (Yh2 * Nbac * rho12) + (Nbac - Nxc) * rho_sum_13_19 + ((Nxc - fxI_xc * Ni - fsI_xc * Ni - fpr_xc * Naa) * rho1) #11
     # used the Naa over the n_aa 
     
     dt_S_I = QV_ratio * (S_I_in - S_I) + fsI_xc * rho1 #12
 
     # Particulate Matter
         
-    dt_X_c = QV_ratio * (X_xc_in - X_xc) - rho1 + rho_summ_13_19  #13 Is X_xc = X_c?
+    dt_X_c = QV_ratio * (X_xc_in - X_xc) - rho1 + rho_sum_13_19  #13 Is X_xc = X_c?
     dt_X_ch = QV_ratio * (X_ch_in - X_ch) + (fch_xc * rho1) - rho2 #14
     dt_X_pr = QV_ratio * (X_pr_in - X_pr) + (fpr_xc * rho1) - rho3 #15
     dt_X_li = QV_ratio * (X_li_in - X_li ) + (fli_xc * rho1) - rho4 #16 
@@ -621,16 +610,6 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     dt_S_hco3 = -rho_a10 #31
     dt_S_nh3 = -rho_a11 #32
     
-    # H+ algebraic equation
-    
-    ''' Moved this to the start
-
-    S_nh4 = S_IN - S_nh3
-    theta = S_cat + S_nh4 - S_hco3 - (S_hac / 64) - (S_hpro / 112) - (S_hbu / 160) - (S_hva / 208) - S_an
-    
-    S_H_ion_new = -(theta / 2) + .5 * np.power(np.power(theta, 2) + 4 * Kw, .5)
-
-    '''
     # Gas equations
     V_ratio = (V_liq / V_gas)
     
@@ -641,15 +620,6 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     dt_S_H_ion = 0
 
     return dt_S_su, dt_S_aa, dt_S_fa, dt_S_va, dt_S_bu, dt_S_pro, dt_S_ac, dt_S_h2, dt_S_ch4, dt_S_IC, dt_S_IN, dt_S_I, dt_X_c, dt_X_ch, dt_X_pr, dt_X_li, dt_X_su, dt_X_aa, dt_X_fa, dt_X_c4, dt_X_pro, dt_X_ac, dt_X_h2, dt_X_I, dt_S_cat, dt_S_an, dt_S_hva, dt_S_hbu, dt_S_hpro, dt_S_hac, dt_S_hco3, dt_S_nh3, dt_S_gas_h2, dt_S_gas_ch4, dt_S_gas_co2, dt_S_H_ion
-
-
-
-
-#%%
-# Turning results from array to dict
-
-
-
 
 
 

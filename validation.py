@@ -58,7 +58,7 @@ def results_to_df(results, label, t, compare_switch=True):
             f'Relative Error ({label})': compare_dict.values()
         })
 
-        df_compare['Bins (odeint)'] = pd.cut(
+        df_compare[f'Bins ({label})'] = pd.cut(
             df_compare[f'Relative Error ({label})'],
             [10**(-10), 0.0001, 0.001, 0.01, 0.1, 1, 10],
             labels = ['< 0.01%', '0.01 - 0.1%', '0.1 - 1%', '1 - 10%', '10 - 100%', '> 100%']
@@ -104,7 +104,7 @@ def plot_compare(df, label=''):
     df['Data Labels'] = (round(df[x_values] * 100, 1)).astype(str) + '%'
 
     fig = px.bar(
-        df.sort_values('Relative Error (odeint)', ascending=True),
+        df.sort_values(x_values, ascending=True),
         x=x_values,
         y=y_values,
         orientation='h',
@@ -158,30 +158,34 @@ results_odeint = odeint(
 #%%
 results_ivp_full = solve_ivp(
     adm1_ode, t_span=(t[0], t[-1]),
-    y0=initial_conditions,  method='RK45',
-    args=(stc_par, bioch_par, phys_par, feed_composition)
+    y0=initial_conditions,  method='Radau',
+    args=(stc_par, bioch_par, phys_par, feed_composition),
+    rtol=np.power(10., -9)
 )
 
 #%%
-df_odeint, df_compare = results_to_df(results=np.transpose(results_odeint), label='odeint', t=t)
+# Run this if you want to analyze ODEINT results
+label = 'odeint_float_par'
+df, df_compare = results_to_df(
+    results=np.transpose(results_odeint), 
+    label=label, 
+    t=t)
 
 #%%
-label = 'odeint_kph_inhib'
+# Run this if you want to analyze IVP results
+label = 'ivp_radau_tup2list'
+df, df_compare = results_to_df(
+    results=results_ivp_full.y, 
+    label=label, 
+    t=results_ivp_full.t
+    )
+
+#%%
+# Export charts based on chosen simulation
+# Don't forget to add a label in the cell above
+
 plot_compare(df_compare, label=label)
-plot_all_time_series(df_odeint, label=label)
-plot_pressure(df_odeint, label=label)
+plot_all_time_series(df, label=label)
+plot_pressure(df, label=label)
 #%%
 
-
-df_odeint.columns[-1]
-
-
-# %%
-# pressure post relative chart
-
-# %%
-
-
-#%%
-
-df_odeint.iloc[-1,:]
