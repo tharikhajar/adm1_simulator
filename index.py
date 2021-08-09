@@ -26,3 +26,6 @@ def display_page(pathname):
         return dashboard.layout
     else:
         return "Erro 404 Página não encontrada, por favor selecione um link."
+
+if __name__ == '__main__':
+    app.run_server(debug=False)
