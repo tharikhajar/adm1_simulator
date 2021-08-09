@@ -46,8 +46,6 @@ def array_to_dict(results):
         'Protons'
     ]
 
-    # Transposing results
-
     zip_for_dict = zip(keys, results)
     results_dict = dict(zip_for_dict)
 

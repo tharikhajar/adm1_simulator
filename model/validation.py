@@ -86,7 +86,7 @@ def plot_all_time_series(df, label=''):
         value_vars=df_normalized.columns[:-1],
         var_name='Variable', value_name='Values'
         )
-    
+
     fig_animated = px.scatter(
         df_results_molten, x=time_column_name,
         y='Values', animation_frame='Variable',
@@ -94,6 +94,7 @@ def plot_all_time_series(df, label=''):
         )
 
     fig_animated.write_html(f'validation_charts/timeseries_{label}.html')
+    return df_normalized, df_results_molten
 
 def plot_compare(df, label=''):
 
@@ -185,7 +186,9 @@ df, df_compare = results_to_df(
 # Don't forget to add a label in the cell above
 
 plot_compare(df_compare, label=label)
-plot_all_time_series(df, label=label)
+df_norm, df_molten = plot_all_time_series(df, label=label)
 plot_pressure(df, label=label)
 #%%
 
+results_ivp_full.y
+# %%
