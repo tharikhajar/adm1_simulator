@@ -9,7 +9,8 @@ import pandas as pd
 
 #%%
 
-# Feed Composition
+# Feed Composition #MHSG: incluir o nome de cada variável, deixar claro o que depende do tipo de alimentação e o que é válido para qq feed
+#MHSG: conferir se todos os valores batem quando é feita a implementação, no início da execução da função ode por exemplo
 
 S_su_in = 0.01 # kg COD m-3
 S_aa_in = 0.001 # kg COD m-3
@@ -38,7 +39,7 @@ X_I_in = 25.0 # kg COD m-3
 S_cat_in = 0.04 # kmole m-3
 S_an_in = 0.02 # kmole m-3
 
-feed_composition = [ 
+feed_composition = [ #MHSG:indicar aqui ou no início do arquivo o que são estes números
     S_su_in, #0
     S_aa_in, #1
     S_fa_in, #2
@@ -69,7 +70,7 @@ feed_composition = [
 
 # Initial Conditions / Variables
 
-S_su =  0.0124
+S_su =  0.0124#MHSG: por que não colocar unidades novamente?
 S_aa =  0.0055
 S_fa =  0.1074
 S_va =  0.0123
@@ -105,7 +106,7 @@ S_gas_h2 = 1.1032*np.power(10.,-5.)
 S_gas_ch4 = 1.6535
 S_gas_co2 = 0.0135
 Q_D = 178.4674
-T_D = 35
+T_D = 35.
 S_D1_D = 0
 S_D2_D = 0
 S_D3_D = 0
@@ -162,8 +163,8 @@ fxI_xc = 0.2
 fch_xc = 0.2
 fpr_xc = 0.2
 fli_xc = 0.3
-Nxc = 0.0376 / 14 # kmole N (kg COD)-1
-Ni = 0.06 / 14 # kmole N (kg COD)-1
+Nxc = 0.0376 / 14. # kmole N (kg COD)-1
+Ni = 0.06 / 14. # kmole N (kg COD)-1
 Naa = 0.007 # kmole N (kg COD)-1
 Cxc = 0.02786 # kmole C (kg COD)-1
 CsI = 0.03 # kmole C (kg COD)-1
@@ -179,7 +180,7 @@ fh2_su = 0.19
 fbu_su = 0.13
 fpro_su = 0.27
 fac_su = 0.41
-Nbac = 0.08 / 14 # # kmole N (kg COD)-1
+Nbac = 0.08 / 14. # # kmole N (kg COD)-1
 Cbu = 0.025 # kmole C (kg COD)-1
 Cpro = 0.0268 # kmole C (kg COD)-1
 Cac = 0.0313 # kmole C (kg COD)-1
@@ -246,34 +247,34 @@ stc_par = [
 
 # Biochemical Parameters
 Kdis = 0.5 # d-1
-Khyd_ch = 10 # d-1
-Khyd_pr = 10 # d-1
-Khyd_li = 10 # d-1
+Khyd_ch = 10. # d-1
+Khyd_pr = 10. # d-1
+Khyd_li = 10. # d-1
 Ks_in = np.power(10., -4.) # M
-Km_su = 30 # d-1
+Km_su = 30. # d-1
 Ks_su = 0.5 # kg COD m-3
 pHul_aa = 5.5
-pHll_aa = 4
-km_aa = 50 # d-1
+pHll_aa = 4.
+km_aa = 50. # d-1
 Ks_aa = 0.3 # kg COD m-3
-km_fa = 6 # d-1
+km_fa = 6. # d-1
 Ks_fa = 0.4 # kg COD m-3
-Kih2_fa = 5 * np.power(10.,-6.) # kg COD m-3
-km_c4 = 20 # d-1
+Kih2_fa = 5. * np.power(10.,-6.) # kg COD m-3
+km_c4 = 20. # d-1
 Ks_c4 = 0.2 # kg COD m-3
 Kih2_c4 = np.power(10., -5.) # kg COD m-3
-km_pro = 13 # d-1
+km_pro = 13. # d-1
 Ks_pro = 0.1 # kg COD m-3
-Kih2_pro = 3.5 * np.power(10., -5.) # kg COD m-3
-km_ac = 8 # d-1
+Kih2_pro = 3.5 * np.power(10., -6.) # kg COD m-3
+km_ac = 8. # d-1
 Ks_ac = 0.15 # kg COD m-3
 Ki_nh3 = 0.0018 # M
-pHul_ac = 7
-pHll_ac = 6
-km_h2 = 35 # d-1
-Ks_h2 = 7 * np.power(10., -6.) # kg COD m-3
-pHul_h2 = 6
-pHll_h2 = 5
+pHul_ac = 7.
+pHll_ac = 6.
+km_h2 = 35. # d-1
+Ks_h2 = 7. * np.power(10., -6.) # kg COD m-3
+pHul_h2 = 6.
+pHll_h2 = 5.
 kdec_Xsu = 0.02 #d-1
 kdec_Xaa = 0.02 #d-1
 kdec_Xfa = 0.02 #d-1
@@ -441,18 +442,18 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
 
     # H+ concentration
 
-    S_nh4 = S_IN - S_nh3
+    S_nh4 = S_IN - S_nh3 
     S_co2 = S_IC - S_hco3
     theta = S_cat + S_nh4 - S_hco3 - (S_hac / 64) - (S_hpro / 112) - (S_hbu / 160) - (S_hva / 208) - S_an
-    
-    S_H_ion = -1 * (theta / 2.) + (.5 * np.sqrt(np.power(theta, 2.) + 4. * Kw))
+
+    S_H_ion = (-1) * (theta / 2.) + (.5 * np.sqrt(np.power(theta, 2.) + 4. * Kw))
 
     # Hill inhibition function based on hydrogen ions (pH Inhibition)
-
-    Kph_aa = np.power(10., -((pHll_aa + pHul_aa) / 2.))
+    # Eq (3.2) p.7
+    Kph_aa = np.power(10., -((pHll_aa + pHul_aa) / 2.)) 
     Kph_ac = np.power(10., -((pHll_ac + pHul_ac) / 2.))
     Kph_h2 = np.power(10., -((pHll_h2 + pHul_h2) / 2.))
-    
+
     n_aa = 3. / (pHul_aa - pHll_aa) 
     n_ac = 3. / (pHul_ac - pHll_ac)
     n_h2 = 3. / (pHul_h2 - pHll_h2)
@@ -464,11 +465,11 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     KpH_n_h2 = np.power(Kph_h2, n_h2)
     I_pH_h2 = KpH_n_h2 / (KpH_n_h2 + np.power(S_H_ion, n_h2))
 
-    I_IN_lim = 1. / (1 + (Ks_in / S_IN))
-    I_h2_fa = 1. / (1 + (S_h2 / Kih2_fa))
-    I_h2_c4 = 1. / (1 + (S_h2 / Kih2_c4))
-    I_h2_pro = 1. / (1 + (S_h2 / Kih2_pro))
-    I_nh3 = 1. / (1 + (S_nh3 / Ki_nh3))
+    I_IN_lim = 1. / (1. + (Ks_in / S_IN))
+    I_h2_fa = 1. / (1. + (S_h2 / Kih2_fa))
+    I_h2_c4 = 1. / (1. + (S_h2 / Kih2_c4))
+    I_h2_pro = 1. / (1. + (S_h2 / Kih2_pro))
+    I_nh3 = 1. / (1. + (S_nh3 / Ki_nh3))
     
     I5 = I6 = I_pH_aa * I_IN_lim
     I7 = I_pH_aa * I_IN_lim * I_h2_fa
@@ -513,17 +514,17 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
 
     # Gas transfer rates
     
-    pgas_h2 = S_gas_h2 * ((R * Top) / 16) # used in rho_T_8
+    pgas_h2 = S_gas_h2 * ((R * Top) / 16) # used in rho_T_8 
     pgas_ch4 = S_gas_ch4 * ((R * Top) / 64) # used in rho_T_9
     pgas_co2 = S_gas_co2 * R * Top # used in rho_T_10
     
-    rho_T_8 = kLa * (S_h2 - 16 * Kh_h2 * pgas_h2) # Molecular Hydrogen
-    rho_T_9 = kLa * (S_ch4 - 64 * Kh_ch4 * pgas_ch4) # Methane
+    rho_T_8 = kLa * (S_h2 - 16 * Kh_h2 * pgas_h2) # Molecular Hydrogen 
+    rho_T_9 = kLa * (S_ch4 - 64 * Kh_ch4 * pgas_ch4) # Methane 
     rho_T_10 = kLa * (S_co2 - Kh_co2 * pgas_co2) # Carbon Dioxide
 
     Pgas = pgas_h2 + pgas_ch4 + pgas_co2 + pgas_h2o # Headspace Pressure
 
-    qgas = kp * (Pgas - Patm) * (Pgas / Patm) # Gas flow rate
+    qgas = kp * (Pgas - Patm) * (Pgas / Patm) # Gas flow rate #MHSG: tem certeza que é esta equação que usaram? lendo o texto, entendi que usaram aquela sem a fração no final. Eu indicaria o número da equação, mas, vejam só, o autor não numerou!
 
     
     # Differential Equations
@@ -531,7 +532,7 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     # Water Phase Equations
     # Soluble Matter
 
-    QV_ratio = (Q_in/V_liq)
+    QV_ratio = (Q_in/V_liq) #Dilution rate
     
     dt_S_su = QV_ratio * (S_su_in - S_su) + rho2 + (1 - ffa_li) * rho4 - rho5 # 1 
     dt_S_aa = QV_ratio * (S_aa_in - S_aa) + rho3 - rho6 #2
@@ -543,10 +544,10 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     dt_S_h2 = QV_ratio * (S_h2_in - S_h2) + (1 - Ysu) * fh2_su * rho5 + (1-Yaa) * fh2_aa * rho6 + (1-Yfa) * 0.3 * rho7 + (1-Yc4) * 0.15 * rho8 + (1-Yc4) * 0.2 * rho9 + (1-Ypro) * 0.43 * rho10 - rho12 - rho_T_8 #8
     dt_S_ch4 = QV_ratio * (S_ch4_in - S_ch4) + (1-Yac) * rho11 + (1-Yh2) * rho12 - rho_T_9 #9
     
-    # Sum for equation 10
+    # Sum for equation 10 
     # s equations
 
-    s1 = (- Cxc) + (fsI_xc * CsI) + (fch_xc * Cch) + (fpr_xc * Cpr) + (fli_xc * Cli) + (fxI_xc * CxI)
+    s1 = (- Cxc) + (fsI_xc * CsI) + (fch_xc * Cch) + (fpr_xc * Cpr) + (fli_xc * Cli) + (fxI_xc * CxI) 
     s2 = (- Cch) + Csu
     s3 = (- Cpr) + Caa
     s4 = (- Cli) + ((1 - ffa_li) * Csu) + (ffa_li * Cfa)
@@ -560,16 +561,15 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     s12 = ((1 - Yh2) * Cch4) + (Yh2 * Cbac)
     s13 = (-Cbac) + Cxc
     
-    s13_x_rho = s13 * (rho13 + rho14 + rho15 + rho16 + rho17 + rho18 + rho19)
+    s13_x_rho = s13 * (rho13 + rho14 + rho15 + rho16 + rho17 + rho18 + rho19) 
 
-    s_list = [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12]
+    s_list = np.array([s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12]) 
     
-    rho_list = [rho1, rho2, rho3, rho4, rho5, rho6, rho7, rho8, rho9, rho10, rho11, rho12]
+    rho_list = np.array([rho1, rho2, rho3, rho4, rho5, rho6, rho7, rho8, rho9, rho10, rho11, rho12]) 
     
-    sum_skpk = 0
+    sum_skpk = sum(s_list * rho_list) + s13_x_rho
     
-    for s, rho in zip(s_list, rho_list):
-        sum_skpk += s * rho + s13_x_rho
+
     
     dt_S_IC = QV_ratio * (S_IC_in - S_IC) - sum_skpk - rho_T_10 #10
 

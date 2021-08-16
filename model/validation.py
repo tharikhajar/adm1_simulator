@@ -161,12 +161,13 @@ results_ivp_full = solve_ivp(
     adm1_ode, t_span=(t[0], t[-1]),
     y0=initial_conditions,  method='Radau',
     args=(stc_par, bioch_par, phys_par, feed_composition),
-    rtol=np.power(10., -9)
+    rtol=np.power(10., -9),
+    atol=np.power(10., -12)
 )
 
 #%%
 # Run this if you want to analyze ODEINT results
-label = 'odeint_float_par'
+label = 'odeint_fixed_KIH2_pro'
 df, df_compare = results_to_df(
     results=np.transpose(results_odeint), 
     label=label, 
@@ -174,7 +175,7 @@ df, df_compare = results_to_df(
 
 #%%
 # Run this if you want to analyze IVP results
-label = 'ivp_radau_tup2list'
+label = 'ivp_lower_atol'
 df, df_compare = results_to_df(
     results=results_ivp_full.y, 
     label=label, 
@@ -190,5 +191,7 @@ df_norm, df_molten = plot_all_time_series(df, label=label)
 plot_pressure(df, label=label)
 #%%
 
+results_ivp_full.y
+# %%
 results_ivp_full.y
 # %%
