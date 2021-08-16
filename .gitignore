@@ -3,3 +3,4 @@ model/validation_charts/
 model/validation.py
 model/__pycache__/
 model/parameters/__pycache__/
+app/__pycache__/
