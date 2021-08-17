@@ -60,7 +60,7 @@ def results_to_df(results, label, t, compare_switch=True):
 
         df_compare[f'Bins ({label})'] = pd.cut(
             df_compare[f'Relative Error ({label})'],
-            [10**(-10), 0.0001, 0.001, 0.01, 0.1, 1, 10],
+            [10**(-15), 0.0001, 0.001, 0.01, 0.1, 1, 10],
             labels = ['< 0.01%', '0.01 - 0.1%', '0.1 - 1%', '1 - 10%', '10 - 100%', '> 100%']
             )
 
@@ -102,7 +102,7 @@ def plot_compare(df, label=''):
     y_values = df.columns[0]
     color_values = df.columns[2]
 
-    df['Data Labels'] = (round(df[x_values] * 100, 4)).astype(str) + '%'
+    df['Data Labels'] = (round(df[x_values], 10)).astype(str)
 
     fig = px.bar(
         df.sort_values(x_values, ascending=True),
@@ -150,7 +150,7 @@ def plot_pressure(df, label=''):
 #%%
 
 # Running the simulation
-t = np.linspace(0, 150, int(500*24*(24/15)))
+t = np.linspace(0, 300, int(500*24*(24/15)))
 print(t[-1])
 results_odeint = odeint(
     adm1_ode, y0=initial_conditions, 
@@ -176,7 +176,7 @@ df, df_compare = results_to_df(
 
 #%%
 # Run this if you want to analyze IVP results
-label = 'ivp_more_decimal_points'
+label = 'ivp_300_days'
 df, df_compare = results_to_df(
     results=results_ivp_full.y, 
     label=label, 
