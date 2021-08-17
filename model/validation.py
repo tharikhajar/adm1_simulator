@@ -80,7 +80,7 @@ def plot_all_time_series(df, label=''):
 
     df_normalized[time_column_name] = df[time_column_name]
 
-    # Animation in plotly works with data in the long version
+    # Animation in plotly express works with data in the long version
     df_results_molten = pd.melt(
         df_normalized, id_vars=time_column_name,
         value_vars=df_normalized.columns[:-1],
@@ -102,7 +102,7 @@ def plot_compare(df, label=''):
     y_values = df.columns[0]
     color_values = df.columns[2]
 
-    df['Data Labels'] = (round(df[x_values] * 100, 1)).astype(str) + '%'
+    df['Data Labels'] = (round(df[x_values] * 100, 4)).astype(str) + '%'
 
     fig = px.bar(
         df.sort_values(x_values, ascending=True),
@@ -142,7 +142,8 @@ def plot_pressure(df, label=''):
         yaxis=dict(
             type='linear',
             range=[1, 100],
-            ticksuffix='%'))
+            ticksuffix='%')
+            )
 
     fig.write_html(f'validation_charts/pressure_{label}.html')
 
@@ -161,7 +162,7 @@ results_ivp_full = solve_ivp(
     adm1_ode, t_span=(t[0], t[-1]),
     y0=initial_conditions,  method='Radau',
     args=(stc_par, bioch_par, phys_par, feed_composition),
-    rtol=np.power(10., -9),
+    rtol=np.power(10., -12),
     atol=np.power(10., -12)
 )
 
@@ -175,7 +176,7 @@ df, df_compare = results_to_df(
 
 #%%
 # Run this if you want to analyze IVP results
-label = 'ivp_lower_atol'
+label = 'ivp_more_decimal_points'
 df, df_compare = results_to_df(
     results=results_ivp_full.y, 
     label=label, 
@@ -192,6 +193,5 @@ plot_pressure(df, label=label)
 #%%
 
 results_ivp_full.y
-# %%
-results_ivp_full.y
+
 # %%

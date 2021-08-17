@@ -418,7 +418,7 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     Cac, Cbac, Ysu, fh2_aa, fva_aa = stc_par[25:30]
     fbu_aa, fpro_aa, fac_aa, Cva, Yaa = stc_par[30:35]
     Yfa, Yc4, Ypro, Cch, Yac = stc_par[35:40]
-    yh2 = stc_par[40] 
+    Yh2 = stc_par[40] 
 
 
     # Biochemical Parameters
@@ -440,13 +440,6 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     kA_BIN, Patm, pgas_h2o, kp, kLa = phys_par[15:20]
     Kh_co2, Kh_ch4, Kh_h2, V_liq, V_gas, Q_in = phys_par[20:]
 
-    # H+ concentration
-
-    S_nh4 = S_IN - S_nh3 
-    S_co2 = S_IC - S_hco3
-    theta = S_cat + S_nh4 - S_hco3 - (S_hac / 64) - (S_hpro / 112) - (S_hbu / 160) - (S_hva / 208) - S_an
-
-    S_H_ion = (-1) * (theta / 2.) + (.5 * np.sqrt(np.power(theta, 2.) + 4. * Kw))
 
     # Hill inhibition function based on hydrogen ions (pH Inhibition)
     # Eq (3.2) p.7
@@ -518,13 +511,15 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     pgas_ch4 = S_gas_ch4 * ((R * Top) / 64) # used in rho_T_9
     pgas_co2 = S_gas_co2 * R * Top # used in rho_T_10
     
+    S_co2 = S_IC - S_hco3
+
     rho_T_8 = kLa * (S_h2 - 16 * Kh_h2 * pgas_h2) # Molecular Hydrogen 
     rho_T_9 = kLa * (S_ch4 - 64 * Kh_ch4 * pgas_ch4) # Methane 
     rho_T_10 = kLa * (S_co2 - Kh_co2 * pgas_co2) # Carbon Dioxide
 
     Pgas = pgas_h2 + pgas_ch4 + pgas_co2 + pgas_h2o # Headspace Pressure
 
-    qgas = kp * (Pgas - Patm) * (Pgas / Patm) # Gas flow rate #MHSG: tem certeza que é esta equação que usaram? lendo o texto, entendi que usaram aquela sem a fração no final. Eu indicaria o número da equação, mas, vejam só, o autor não numerou!
+    qgas = kp * (Pgas - Patm) #* (Pgas / Patm) # Gas flow rate #MHSG: tem certeza que é esta equação que usaram? lendo o texto, entendi que usaram aquela sem a fração no final. Eu indicaria o número da equação, mas, vejam só, o autor não numerou!
 
     
     # Differential Equations
@@ -611,13 +606,20 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     dt_S_nh3 = -rho_a11 #32
     
     # Gas equations
+
     V_ratio = (V_liq / V_gas)
     
     dt_S_gas_h2 = -((S_gas_h2 * qgas) / V_gas) + rho_T_8 * (V_ratio) #33
     dt_S_gas_ch4 = -((S_gas_ch4 * qgas) / V_gas) + rho_T_9 * (V_ratio) #34
     dt_S_gas_co2 = -((S_gas_co2 * qgas) / V_gas) + rho_T_10 * (V_ratio) #35
 
-    dt_S_H_ion = 0
+    # H+ 
+
+    S_nh4 = S_IN - S_nh3 
+    theta = S_cat + S_nh4 - S_hco3 - (S_hac / 64) - (S_hpro / 112) - (S_hbu / 160) - (S_hva / 208) - S_an
+    new_S_H_ion = (-1) * (theta / 2.) + (.5 * np.sqrt(np.power(theta, 2.) + 4. * Kw))
+
+    dt_S_H_ion = new_S_H_ion - S_H_ion
 
     return dt_S_su, dt_S_aa, dt_S_fa, dt_S_va, dt_S_bu, dt_S_pro, dt_S_ac, dt_S_h2, dt_S_ch4, dt_S_IC, dt_S_IN, dt_S_I, dt_X_c, dt_X_ch, dt_X_pr, dt_X_li, dt_X_su, dt_X_aa, dt_X_fa, dt_X_c4, dt_X_pro, dt_X_ac, dt_X_h2, dt_X_I, dt_S_cat, dt_S_an, dt_S_hva, dt_S_hbu, dt_S_hpro, dt_S_hac, dt_S_hco3, dt_S_nh3, dt_S_gas_h2, dt_S_gas_ch4, dt_S_gas_co2, dt_S_H_ion
 
