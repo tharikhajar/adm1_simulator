@@ -151,13 +151,8 @@ def plot_pressure(df, label=''):
 
 # Running the simulation
 t = np.linspace(0, 300, int(500*24*(24/15)))
-print(t[-1])
-results_odeint = odeint(
-    adm1_ode, y0=initial_conditions, 
-    t=t, tfirst=True,
-    args=(stc_par, bioch_par, phys_par, feed_composition)
-    )
-#%%
+label = 'ivp_retest'
+
 results_ivp_full = solve_ivp(
     adm1_ode, t_span=(t[0], t[-1]),
     y0=initial_conditions,  method='Radau',
@@ -166,24 +161,14 @@ results_ivp_full = solve_ivp(
     atol=np.power(10., -12)
 )
 
-#%%
-# Run this if you want to analyze ODEINT results
-label = 'odeint_fixed_KIH2_pro'
-df, df_compare = results_to_df(
-    results=np.transpose(results_odeint), 
-    label=label, 
-    t=t)
 
-#%%
-# Run this if you want to analyze IVP results
-label = 'ivp_300_days'
+
 df, df_compare = results_to_df(
     results=results_ivp_full.y, 
     label=label, 
     t=results_ivp_full.t
     )
 
-#%%
 # Export charts based on chosen simulation
 # Don't forget to add a label in the cell above
 
@@ -192,6 +177,15 @@ df_norm, df_molten = plot_all_time_series(df, label=label)
 plot_pressure(df, label=label)
 #%%
 
-results_ivp_full.y
-
+# results_odeint = odeint(
+#     adm1_ode, y0=initial_conditions, 
+#     t=t, tfirst=True,
+#     args=(stc_par, bioch_par, phys_par, feed_composition)
+#     )
+# # Run this if you want to analyze ODEINT results
+# label = 'odeint_fixed_KIH2_pro'
+# df, df_compare = results_to_df(
+#     results=np.transpose(results_odeint), 
+#     label=label, 
+#     t=t)
 # %%
