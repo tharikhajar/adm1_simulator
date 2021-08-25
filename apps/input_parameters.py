@@ -9,9 +9,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import pathlib
-# Importing support files
-#from app import app
+from app import app
+#Importing support files
+
+# Relative data folder
 PATH = pathlib.Path(__file__).parent
+DATA_PATH = PATH.joinpath("../datasets").resolve()
+
 # Connecting files (Include data paths below)
 
 app = dash.Dash(__name__)
@@ -25,7 +29,7 @@ V_digestor_gas = 20 # m³
 
 # Layout
 
-app.layout = html.Div([
+layout = html.Div([
     html.H1('Insira os dados solicitados para a simulação: ', style={"textAlign": "center"}),
 
     html.Div([
@@ -119,7 +123,11 @@ app.layout = html.Div([
         ),                      
     ]),
 
-html.Br(),
+    html.Br(),
+
+    html.H3("Utilize o slider abaixo para selecionar a diluição desejada:"),
+
+    html.Br(),
 
     html.Div([        
         dcc.Slider( 
@@ -129,18 +137,21 @@ html.Br(),
             step = 1,
             value = 10
         ),
-        html.Div(id='slider_output_container')
     ]),
 
-html.Br(),
-html.Br(),
+    html.Div(id='slider_output_container'),
 
-        html.Button( #como conectar esse botão ao acionamento da resolução do modelo ADM-1?
+    html.Br(),
+    html.Br(),
+
+        html.Button( #como conectar esse botão ao acionamento da resolução do modelo ADM1?
             'SIMULAR', 
             id='botao_simular',
             n_clicks = 0,
         ),
+        
 ])
+
 # Callbacks
 
 @app.callback(
@@ -148,10 +159,3 @@ html.Br(),
     [dash.dependencies.Input('slider_diluição', 'value')])
 def update_output(value):
     return 'A diluição é de {} para massa.'.format(value)
-
-# Run Server
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
-
-
