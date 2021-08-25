@@ -1,15 +1,15 @@
 #%%
 import numpy as np
-from scipy.integrate import odeint
+from numpy.core.fromnumeric import mean
 from scipy.integrate import solve_ivp
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
 import plotly.graph_objects as go
 
-import ode, support_functions, parameters.parameters_bsm2
+import ode_class, support_functions, parameters.parameters_bsm2
 from importlib import reload
-reload(ode)
+reload(ode_class)
 reload(support_functions)
 reload(parameters.parameters_bsm2)
 
@@ -24,7 +24,7 @@ def compare(our_lst, other_lst):
 
     for our_value, their_value in zip(our_lst, other_lst):
         
-        compare_list.append(abs(their_value - our_value) / average([their_value, our_value]))
+        compare_list.append(abs(their_value - our_value) / mean([their_value, our_value]))
     
     return compare_list
 
@@ -151,7 +151,7 @@ def plot_pressure(df, label=''):
 
 # Running the simulation
 t = np.linspace(0, 300, int(500*24*(24/15)))
-label = 'ivp_retest'
+label = 'ivp_class_feed'
 
 results_ivp_full = solve_ivp(
     adm1_ode, t_span=(t[0], t[-1]),
@@ -173,8 +173,8 @@ df, df_compare = results_to_df(
 # Don't forget to add a label in the cell above
 
 plot_compare(df_compare, label=label)
-df_norm, df_molten = plot_all_time_series(df, label=label)
-plot_pressure(df, label=label)
+#df_norm, df_molten = plot_all_time_series(df, label=label)
+#plot_pressure(df, label=label)
 #%%
 
 # results_odeint = odeint(

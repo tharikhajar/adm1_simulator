@@ -2,6 +2,18 @@
 #%%
 import numpy as np
 
+class Simulation:
+    def __init__(
+        self, substrate='ETE', DQO=57.096,
+        mass=1, V_liq=1, V_gas=1, dillution_rate=1
+        ):
+
+        self.substrate = substrate
+        self.DQO = DQO
+        self.mass = mass
+        self.V_liq = V_liq
+        self.V_gas = V_gas
+        self.dillution_rate = dillution_rate
 #%%
 
 # Feed Composition #MHSG: incluir o nome de cada variável, deixar claro o que depende do tipo de alimentação e o que é válido para qq feed
@@ -16,8 +28,6 @@ S_pro_in = 0.001 # kg COD m-3
 S_ac_in = 0.001 # kg COD m-3
 S_h2_in = np.power(10., -8.) # kg COD m-3
 S_ch4_in = np.power(10., -5.) # kg COD m-3
-S_IC_in = 0.04 # kmole m-3
-S_IN_in = 0.01 # kmole m-3
 S_I_in = 0.02 # kg COD m-3
 X_xc_in = 2.0 # kg COD m-3
 X_ch_in = 5.0 # kg COD m-3
@@ -31,10 +41,13 @@ X_pro_in = 0.01 # kg COD m-3
 X_ac_in = 0.01 # kg COD m-3
 X_h2_in = 0.01 # kg COD m-3
 X_I_in = 25.0 # kg COD m-3
+
+S_IC_in = 0.04 # kmole m-3
+S_IN_in = 0.01 # kmole m-3
 S_cat_in = 0.04 # kmole m-3
 S_an_in = 0.02 # kmole m-3
 
-feed_composition = [ #MHSG:indicar aqui ou no início do arquivo o que são estes números
+feed_composition_organic = [ #MHSG:indicar aqui ou no início do arquivo o que são estes números
     S_su_in, #0
     S_aa_in, #1
     S_fa_in, #2
@@ -44,25 +57,29 @@ feed_composition = [ #MHSG:indicar aqui ou no início do arquivo o que são este
     S_ac_in, #6
     S_h2_in, #7
     S_ch4_in, #8
-    S_IC_in, #9
-    S_IN_in, #10
-    S_I_in, #11
-    X_xc_in, #12
-    X_ch_in, #13
-    X_pr_in, #14
-    X_li_in, #15
-    X_su_in, #16
-    X_aa_in, #17
-    X_fa_in, #18
-    X_c4_in, #19
-    X_pro_in, #20
-    X_ac_in, #21
-    X_h2_in, #22
-    X_I_in, #23
-    S_cat_in, #24
-    S_an_in #25
+    S_I_in, #9
+    X_xc_in, #10
+    X_ch_in, #11
+    X_pr_in, #12
+    X_li_in, #13
+    X_su_in, #14
+    X_aa_in, #15
+    X_fa_in, #16
+    X_c4_in, #17
+    X_pro_in, #18
+    X_ac_in, #19
+    X_h2_in, #20
+    X_I_in, #21
 ]
 
+feed_composition_inorganic = [
+    S_IC_in, #0
+    S_IN_in, #1
+    S_cat_in, #2
+    S_an_in #3
+]
+sum(feed_composition_organic)
+#%%
 # Initial Conditions / Variables
 
 S_su =  0.0124#MHSG: por que não colocar unidades novamente?
@@ -100,13 +117,6 @@ S_nh3 = 0.0019
 S_gas_h2 = 1.1032*np.power(10.,-5.) 
 S_gas_ch4 = 1.6535
 S_gas_co2 = 0.0135
-Q_D = 178.4674
-T_D = 35.
-S_D1_D = 0
-S_D2_D = 0
-S_D3_D = 0
-X_D4_D = 0
-X_D5_D = 0
 S_H_ion = 5.4562*np.power(10., -8.)
 
 initial_conditions = [
@@ -383,18 +393,24 @@ phys_par = [
 phys_par
 
 # %%
-def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_composition):
+def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_composition_organic, feed_composition_inorganic):
 
     # Feed Composition
 
-    S_su_in, S_aa_in, S_fa_in, S_va_in, S_bu_in = feed_composition[0:5]
-    S_pro_in, S_ac_in, S_h2_in, S_ch4_in, S_IC_in = feed_composition[5:10]
-    S_IN_in, S_I_in, X_xc_in, X_ch_in, X_pr_in = feed_composition[10:15]
-    X_li_in, X_su_in, X_aa_in, X_fa_in, X_c4_in = feed_composition[15:20]
-    X_pro_in, X_ac_in, X_h2_in, X_I_in, S_cat_in, S_an_in = feed_composition[20:]
+    # Organic (measured in DQO/m-3)
+
+    S_su_in, S_aa_in, S_fa_in, S_va_in, S_bu_in = feed_composition_organic[0:5]
+    S_pro_in, S_ac_in, S_h2_in, S_ch4_in, S_I_in  = feed_composition_organic[5:10]
+    X_xc_in, X_ch_in, X_pr_in, X_li_in, X_su_in = feed_composition_organic[10:15]
+    X_aa_in, X_fa_in, X_c4_in, X_pro_in, X_ac_in = feed_composition_organic[15:20]
+    X_h2_in, X_I_in,  = feed_composition_organic[20:]
+
+    # Inorganic (measured in kmole(m-3))
+    
+    S_IC_in, S_IN_in, S_cat_in, S_an_in = feed_composition_inorganic
 
     # Variables
-
+    
     S_su, S_aa, S_fa, S_va, S_bu, S_pro = initial_conditions[0:6]
     S_ac, S_h2, S_ch4, S_IC, S_IN = initial_conditions[6:11]
     S_I, X_xc, X_ch, X_pr, X_li = initial_conditions[11:16]
