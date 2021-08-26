@@ -154,10 +154,7 @@ initial_condition_array = np.array(initial_conditions)
 DQO_initial_condition = sum(initial_condition_array[:-6])
 initial_condition_ratio = initial_condition_array / DQO_initial_condition
 pH = -1 * np.log10(S_H_ion)
-gas_initial_state = np.array([S_gas_h2, S_gas_ch4, S_gas_co2])
-print(S_H_ion)
-print(np.power(10, -1 * pH))
-pH
+
 #%%
 
 # This is not gonna be used. keeping here to have quick access to the order of the variables
@@ -290,7 +287,7 @@ stc_par = [
     Yfa, #35
     Yc4, #36
     Ypro, #37
-    Cch, #38
+    Cch4, #38
     Yac, #39
     Yh2, #40
 ]

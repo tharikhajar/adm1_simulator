@@ -34,7 +34,7 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
     fpro_su, fac_su, Nbac, Cbu, Cpro = stc_par[20:25]
     Cac, Cbac, Ysu, fh2_aa, fva_aa = stc_par[25:30]
     fbu_aa, fpro_aa, fac_aa, Cva, Yaa = stc_par[30:35]
-    Yfa, Yc4, Ypro, Cch, Yac = stc_par[35:40]
+    Yfa, Yc4, Ypro, Cch4, Yac = stc_par[35:40]
     Yh2 = stc_par[40] 
 
 
@@ -42,7 +42,7 @@ def adm1_ode(t, initial_conditions, stc_par, bioch_par, phys_par, feed_compositi
 
     Kdis, Khyd_ch, Khyd_pr, Khyd_li, Ks_in = bioch_par[0:5]
     Km_su, Ks_su, pHul_aa, pHll_aa, km_aa = bioch_par[5:10]
-    Ks_aa, Km_fa, Ks_fa, Kih2_fa, km_c4 = bioch_par[10:15]
+    Ks_aa, km_fa, Ks_fa, Kih2_fa, km_c4 = bioch_par[10:15]
     Ks_c4, Kih2_c4, km_pro, Ks_pro, Kih2_pro = bioch_par[15:20]
     km_ac, Ks_ac, Ki_nh3, pHul_ac, pHll_ac = bioch_par[20:25]
     km_h2, Ks_h2, pHul_h2, pHll_h2, kdec_Xsu = bioch_par[25:30]

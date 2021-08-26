@@ -90,20 +90,6 @@ class Simulation:
 simulate = Simulation('BSM2')
 simulate.calculate_parameters()
 simulate.simulate()
-#%%
-simulate.feed_composition
+
 #%%
 simulate.results[:,-1]
-    # def __init__(self, substrate='ETE', DQO=57.096,
-    #     mass=1, V_liq=3400, V_gas=300, dillution_rate=1):
-
-    #     self.substrate = substrate
-    #     self.DQO = DQO
-    #     self.mass = mass
-    #     self.V_liq = V_liq
-    #     self.V_gas = V_gas
-    #     self.dillution_rate = dillution_rate
-#%%
-
-# Feed Composition #MHSG: incluir o nome de cada variável, deixar claro o que depende do tipo de alimentação e o que é válido para qq feed
-#MHSG: conferir se todos os valores batem quando é feita a implementação, no início da execução da função ode por exemplo
