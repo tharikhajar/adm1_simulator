@@ -13,10 +13,10 @@ reload(ode_class)
 reload(support_functions)
 reload(parameters.parameters_bsm2)
 
-from ode import *
+from ode_class import *
 from support_functions import *
 from parameters.parameters_bsm2 import BSM2_results
-
+#%%
 # Defining function to compare simulation results
 def compare(our_lst, other_lst):
     
@@ -40,9 +40,9 @@ def results_to_df(results, label, t, compare_switch=True):
 
     results_dict = array_to_dict(results)
     df = pd.DataFrame(data=results_dict)
-    df = pH_post_calculation(df)
-    df = gas_pressure_post_calculation(df)
-    df['Time (days)'] = t
+    # df = pH_post_calculation(df)
+    #df = gas_pressure_post_calculation(df)
+    #df['Time (days)'] = t
 
     if compare_switch == True:
 
@@ -51,7 +51,7 @@ def results_to_df(results, label, t, compare_switch=True):
         reload(parameters.parameters_bsm2)
         from parameters.parameters_bsm2 import BSM2_results
 
-        compare_array = compare(df.tail(1).values[0][:-10], BSM2_results)
+        compare_array = compare(df.tail(1).values[0], BSM2_results)
         compare_dict = array_to_dict(compare_array)
         df_compare = pd.DataFrame(data={
             'Variables': compare_dict.keys(),
@@ -176,7 +176,11 @@ plot_compare(df_compare, label=label)
 #df_norm, df_molten = plot_all_time_series(df, label=label)
 #plot_pressure(df, label=label)
 #%%
-
+df.tail(1).values[0]
+#%%
+bsm2_array = np.array(BSM2_results)
+bsm2_array
+#%%
 # results_odeint = odeint(
 #     adm1_ode, y0=initial_conditions, 
 #     t=t, tfirst=True,

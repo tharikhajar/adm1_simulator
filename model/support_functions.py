@@ -17,8 +17,6 @@ def array_to_dict(results):
         'Acetic Acid',
         'Hydrogen (Liquid)',
         'Methane (Liquid)',
-        'Inorganic Carbon',
-        'Inorganic Nitrogen',
         'Soluble Inerts',
         'Composite Material',
         'Carbohydrates',
@@ -32,8 +30,11 @@ def array_to_dict(results):
         'Acetic Acid Consumers',
         'Hydrogen Consumers',
         'Composite Inerts',
+        'Inorganic Carbon',
+        'Inorganic Nitrogen',
         'Cations',
         'Anions',
+        'Protons',
         'Valeric Conjugate',
         'Butyric Conjugate',
         'Propionic Conjugate',
@@ -42,8 +43,7 @@ def array_to_dict(results):
         'Ammonia',
         'Hydrogen (Gas)',
         'Methane (Gas)',
-        'Carbon Dioxide (Gas)',
-        'Protons'
+        'Carbon Dioxide (Gas)'
     ]
 
     zip_for_dict = zip(keys, results)
