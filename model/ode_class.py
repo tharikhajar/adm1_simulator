@@ -21,6 +21,10 @@ import model.ode
 reload(model.ode)
 from model.ode import adm1_ode
 
+import model.parameters.variables_dictionary
+reload(model.parameters.variables_dictionary)
+from model.parameters.variables_dictionary import variables_data, Variable
+
 
 # Eventually, we are going to have more than one substrate
 parameters_dict = dict(
@@ -29,6 +33,8 @@ parameters_dict = dict(
 
 class Simulation:
     def __init__(self, substrate="BSM2"):
+
+        self.data = variables_data
 
         self.substrate = substrate
 
@@ -91,19 +97,15 @@ class Simulation:
             atol=np.power(10., -12)
         )
 
-        self.results = results.y
+        for variable, result in zip(self.data.keys(), results.y):
+            self.data[variable].values = result
+
         self.t = results.t
+        
         self.simulation_status = 1
 
 
 
 
-#%%
-simulate = Simulation('BSM2')
-simulate.calculate_parameters()
-simulate.simulate()
-
-#%%
-simulate.results[:,-1]
 
 # %%

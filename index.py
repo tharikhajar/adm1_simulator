@@ -68,7 +68,7 @@ def plot_test(n_clicks):
     while simulation.simulation_status == 0:
         time.sleep(.1)
 
-    y = simulation.results[0]
+    y = simulation.data['S_gas_ch4'].values
     t = simulation.t
 
     fig = go.Figure(data=go.Scatter(x=t, y=y))
