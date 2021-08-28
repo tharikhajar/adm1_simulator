@@ -5,20 +5,27 @@ from importlib import reload
 from scipy.integrate import solve_ivp
 import pandas as pd
 
-import parameters.parameters_bsm2
-reload(parameters.parameters_bsm2)
-from parameters.parameters_bsm2 import BSM2_parameters, BSM2_results
+# import parameters.parameters_bsm2
+# reload(parameters.parameters_bsm2)
+# from parameters.parameters_bsm2 import BSM2_parameters, BSM2_results
 
-import ode
-reload(ode)
-from ode import adm1_ode
+# import ode
+# reload(ode)
+# from ode import adm1_ode
+
+import model.parameters.parameters_bsm2
+reload(model.parameters.parameters_bsm2)
+from model.parameters.parameters_bsm2 import BSM2_parameters, BSM2_results
+
+import model.ode
+reload(model.ode)
+from model.ode import adm1_ode
 
 
 # Eventually, we are going to have more than one substrate
 parameters_dict = dict(
     BSM2 = BSM2_parameters
 )
-
 
 class Simulation:
     def __init__(self, substrate="BSM2"):
@@ -33,7 +40,7 @@ class Simulation:
         self.gas_initial_state = param['initial_condition']['gas_initial_state']
         self.stc_par = param['stc_par']
         self.bioch_par = param['bioch_par']
-        self.phys_par = param['phys_par']['phys_par']
+        self.phys_par_partial = param['phys_par']['phys_par']
         self.V_liq = param['phys_par']['V_liq']
         self.V_gas = param['phys_par']['V_gas']
         self.Q_in = param['phys_par']['Q_in']
@@ -46,7 +53,8 @@ class Simulation:
         self.BSM2_results = BSM2_results
 
     def update_parameters(self, DQO, pH, dillution_rate, V_liq, V_gas, mass):
-        # Update object based on user input
+        ''' Update object based on user input
+        '''
 
         self.DQO = DQO
         self.pH = pH
@@ -56,18 +64,21 @@ class Simulation:
         self.mass = mass
 
     def calculate_parameters(self):
-        # Update object with parameters in the shape required by ODE function
+        '''Update object with parameters in the shape required by ODE function
+        '''
 
+  
         self.feed_composition = self.feed_composition_ratios * self.DQO
 
         initial_condition = self.initial_condition_ratio * self.DQO_initial_condition # Change to DQO after validation
-        self.initial_condition = np.concatenate((initial_condition, [np.power(10, -1 * self.pH)], self.gas_initial_state))
+        self.initial_condition = np.concatenate((initial_condition, [np.power(10., -1 * self.pH)], self.gas_initial_state))
 
-        self.Q_in = 170#(self.mass * self.dillution_rate) / 24
-        self.phys_par = np.concatenate((self.phys_par, [self.V_liq, self.V_gas, self.Q_in]))
+        self.Q_in = (self.mass * self.dillution_rate) / 24
+        self.phys_par = np.concatenate((self.phys_par_partial, [self.V_liq, self.V_gas, self.Q_in]))
 
     def simulate(self):
-        # Runs the model
+        '''Runs the model
+        '''
 
         t = np.linspace(0, 300, int(500*24*(24/15)))
 
@@ -93,3 +104,5 @@ simulate.simulate()
 
 #%%
 simulate.results[:,-1]
+
+# %%

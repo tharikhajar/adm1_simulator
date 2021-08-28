@@ -1,9 +1,14 @@
 # This file holds the parameter set from Rosen; Jeppsson 2006 implementation of ADM1 within the BSM2 framework
 # This implementation is intended for urban waste water digestion and is widely used as an implementation validadion
-#%%
-import numpy as np
-# BSM2 Benchmark Results
 
+# The values declared here are imported in the ode_class.py file
+
+import numpy as np
+
+# BSM2 Benchmark Results
+# Feed composition
+
+# Organics
 S_su_in = 0.01 # kg COD m-3
 S_aa_in = 0.001 # kg COD m-3
 S_fa_in = 0.001 # kg COD m-3
@@ -27,12 +32,13 @@ X_ac_in = 0.01 # kg COD m-3
 X_h2_in = 0.01 # kg COD m-3
 X_I_in = 25.0 # kg COD m-3
 
+# Inorganics
 S_IC_in = 0.04 # kmole m-3
 S_IN_in = 0.01 # kmole m-3
 S_cat_in = 0.04 # kmole m-3
 S_an_in = 0.02 # kmole m-3
 
-feed_composition = [ #MHSG:indicar aqui ou no início do arquivo o que são estes números
+feed_composition = [ # The numbers indicate the index for each value within the array
     S_su_in, #0
     S_aa_in, #1
     S_fa_in, #2
@@ -61,13 +67,16 @@ feed_composition = [ #MHSG:indicar aqui ou no início do arquivo o que são este
     S_an_in #25
 ]
 
+# The user will be inputing DQO values through the user interface. To get that value
+# into the model, we will use the ratios between the components in the feed composition 
+# of the original paper. The last 4 components are left out of the DQO sum because
+# they are inorganic, measured in kmol
+
 feed_composition_array = np.array(feed_composition)
 DQO = sum(feed_composition_array[:-4])
 feed_composition_ratios = feed_composition_array / DQO
 
 
-
-#%%
 # Initial Conditions / Variables
 
 # Organics
@@ -150,59 +159,15 @@ initial_conditions = [
     S_nh3 #31
 ] 
 
+# The same ideia described above feed composition calculation applies here.
+# However, here we have also the pH that will be provided directly by the user
+# and the initial gas concentration, which we will keep constant as there is no
+# reasonable way known to us to calculate that from the substrate composition
 initial_condition_array = np.array(initial_conditions)
 DQO_initial_condition = sum(initial_condition_array[:-6])
 initial_condition_ratio = initial_condition_array / DQO_initial_condition
 pH = -1 * np.log10(S_H_ion)
-
-#%%
-
-# This is not gonna be used. keeping here to have quick access to the order of the variables
-# initial_conditions = [
-#     S_su, #0
-#     S_aa, #1
-#     S_fa, #2
-#     S_va, #3
-#     S_bu, #4
-#     S_pro, #5
-#     S_ac, #6
-#     S_h2, #7
-#     S_ch4, #8
-#     S_I, #9
-#     X_xc, #10
-#     X_ch, #11
-#     X_pr, #12
-#     X_li, #13
-#     X_su, #14
-#     X_aa, #15
-#     X_fa, #16
-#     X_c4, #17
-#     X_pro, #18
-#     X_ac, #19
-
-#     X_h2, #20
-#     X_I, #21
-
-#     S_IC, #22
-#     S_IN, #23
-#     S_cat, #24
-#     S_an, #25
-
-#     S_H_ion, #26
-
-#     S_hva ,#27
-#     S_hbu, #28
-#     S_hpro, #29
-#     S_hac, #30
-#     S_hco3, #31
-#     S_nh3, #32
-#     S_gas_h2, #33
-#     S_gas_ch4, #34
-#     S_gas_co2 #35
-#     ] 
-
-
-#Parameters
+gas_initial_state = [S_gas_h2, S_gas_ch4, S_gas_co2]
 
 # Stoichiometric Parameters
 
@@ -399,6 +364,8 @@ kLa = 200. # d-1
 Kh_co2 = 0.035 * np.exp((-19410 / (R * 100)) * t_inv_dif)
 Kh_ch4 = 0.0014 * np.exp((-14240/(R * 100)) * t_inv_dif)
 Kh_h2 = (7.8 * np.power(10., -4.)) * np.exp((-4180 / (R * 100)) * t_inv_dif)
+
+# These will be provided by the user, so it wont be added in the array now
 V_liq = 3400. # m^3
 V_gas = 300. # m^3
 Q_in = 170. # m^3 d-1
@@ -474,6 +441,7 @@ BSM2_results = [
 
 ]
 
+# This dictionary will be imported in ode_class.py file
 BSM2_parameters = dict(
     feed_composition_ratios = feed_composition_ratios,
     initial_condition = dict(
@@ -490,7 +458,7 @@ BSM2_parameters = dict(
         Q_in = Q_in
     ),
     DQO=DQO,
-    DQO_initial_condition = DQO_initial_condition,
+    DQO_initial_condition = DQO_initial_condition, # validation only
     mass=1,
     dillution_rate=1
 )

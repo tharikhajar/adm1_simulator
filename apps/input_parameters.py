@@ -1,10 +1,8 @@
 #Importing Libraries
 from dash_core_components.Slider import Slider
 from dash_html_components.H3 import H3
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import dash
+
+
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
@@ -13,19 +11,17 @@ from app import app
 #Importing support files
 
 # Relative data folder
-PATH = pathlib.Path(__file__).parent
-DATA_PATH = PATH.joinpath("../datasets").resolve()
 
 # Connecting files (Include data paths below)
 
-app = dash.Dash(__name__)
+# app = dash.Dash(__name__)
 
 # Data manipulation (Import and clean data from support files)
 DQO = 125 # kg/DQO parameters
 pH = 7 
 massa_dia = 3 #kg/m³
-V_digestor_liq = 20 # m3
-V_digestor_gas = 20 # m³
+V_digestor_liq = 80 # m³
+V_digestor_gas = V_digestor_liq * 0.3 # m³
 
 # Layout
 
@@ -39,7 +35,7 @@ layout = html.Div([
         dcc.Input(
             id = 'DQO',
             type = 'number',
-            placeholder = 125,
+            value = 125,
             debounce = True,
             min = 0 , max = 10000, step = 0.01,
             minLength = 0, maxLength = 100,
@@ -57,7 +53,7 @@ layout = html.Div([
         dcc.Input(
             id = 'pH',
             type = 'number',
-            placeholder = 7,
+            value = 7,
             debounce = True,
             min = 0 , max = 14, step = 1,
             minLength = 0, maxLength = 100,
@@ -75,9 +71,9 @@ layout = html.Div([
         dcc.Input(            
             id = 'massa_dia',
             type = 'number',
-            placeholder = 10,
+            value = 10,
             debounce = True,
-            min = 0 , max = 100000000, step = 10,
+            min = 0 , max = 100000000, step = 1,
             minLength = 0, maxLength = 50,
             autoComplete = 'on',
             disabled = False,
@@ -93,9 +89,9 @@ layout = html.Div([
         dcc.Input(            
             id = 'Volume_Liquido',
             type = 'number',
-            placeholder = 80,
+            value = V_digestor_liq,
             debounce = True,
-            min = 0 , max = 100000000, step = 10,
+            min = 0 , max = 100000000, step = 1,
             minLength = 0, maxLength = 50,
             autoComplete = 'on',
             disabled = False,
@@ -111,9 +107,9 @@ layout = html.Div([
         dcc.Input(            
             id = 'Volume_Headspace',
             type = 'number',
-            placeholder = 20,
+            value = V_digestor_gas,
             debounce = True,
-            min = 0 , max = 100000000, step = 10,
+            min = 0 , max = 100000000, step = 1,
             minLength = 0, maxLength = 50,
             autoComplete = 'on',
             disabled = False,
@@ -128,6 +124,8 @@ layout = html.Div([
     html.H3("Utilize o slider abaixo para selecionar a diluição desejada:"),
 
     html.Br(),
+
+    html.Div(id='oi'),
 
     html.Div([        
         dcc.Slider( 
@@ -144,18 +142,16 @@ layout = html.Div([
     html.Br(),
     html.Br(),
 
-        html.Button( #como conectar esse botão ao acionamento da resolução do modelo ADM1?
+        dcc.Link(html.Button( #como conectar esse botão ao acionamento da resolução do modelo ADM1?
             'SIMULAR', 
             id='botao_simular',
             n_clicks = 0,
-        ),
+        ), href='/results'),
         
 ])
 
-# Callbacks
 
-@app.callback(
-    dash.dependencies.Output('slider_output_container', 'children'),
-    [dash.dependencies.Input('slider_diluição', 'value')])
-def update_output(value):
-    return 'A diluição é de {} para massa.'.format(value)
+
+# Callbacks
+# if __name__ == '__main__':
+#     app.run_server(debug=False)
