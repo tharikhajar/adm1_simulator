@@ -65,8 +65,9 @@ def simulate_test(n_clicks, DQO, pH, mass, V_liq, V_gas, dillution_rate):
 @app.callback(Output('teste', 'figure'),
     [Input('botao_teste', 'n_clicks')])
 def plot_test(n_clicks):
+    while simulation.simulation_status == 0:
+        time.sleep(.1)
 
-    time.sleep(10)
     y = simulation.results[0]
     t = simulation.t
 

@@ -8,15 +8,11 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import pathlib
 from app import app
-#Importing support files
-
-# Relative data folder
-
-# Connecting files (Include data paths below)
 
 # app = dash.Dash(__name__)
 
-# Data manipulation (Import and clean data from support files)
+# Data manipulation
+
 DQO = 125 # kg/DQO parameters
 pH = 7 
 massa_dia = 3 #kg/m³
@@ -43,7 +39,9 @@ layout = html.Div([
             disabled = False,
             readOnly = False,
             required= True,
-            size = "100"
+            size = "100",
+            persistence = True, persistence_type = 'session'
+        
         ),
 
     html.Br(),
@@ -61,7 +59,8 @@ layout = html.Div([
             disabled = False,
             readOnly = False,
             required= True,
-            size = "100"
+            size = "100",
+            persistence = True, persistence_type = 'session'
         ),
     
     html.Br(),
@@ -79,7 +78,8 @@ layout = html.Div([
             disabled = False,
             readOnly = False,
             required= True,
-            size = "50"
+            size = "50",
+            persistence = True, persistence_type = 'session'          
         ),
 
     html.Br(),
@@ -97,7 +97,8 @@ layout = html.Div([
             disabled = False,
             readOnly = False,
             required= True,
-            size = "100"
+            size = "100",
+            persistence = True, persistence_type = 'session'
         ),
 
     html.Br(),
@@ -115,7 +116,8 @@ layout = html.Div([
             disabled = False,
             readOnly = False,
             required= True,
-            size = "100"
+            size = "100",
+            persistence = True, persistence_type = 'session'
         ),                      
     ]),
 
@@ -133,7 +135,8 @@ layout = html.Div([
             min = 0,
             max = 20, # Dependes on unity  used L or m³?
             step = 1,
-            value = 10
+            value = 10,
+            persistence = True, persistence_type = 'session'
         ),
     ]),
 
@@ -147,11 +150,7 @@ layout = html.Div([
             id='botao_simular',
             n_clicks = 0,
         ), href='/results'),
-        
 ])
 
-
-
-# Callbacks
 # if __name__ == '__main__':
 #     app.run_server(debug=False)

@@ -47,6 +47,7 @@ class Simulation:
         self.DQO = param['DQO']
         self.mass = param['mass']
         self.dillution_rate = param['dillution_rate']
+        self.simulation_status = 0
 
         # use for validation
         self.DQO_initial_condition = param['DQO_initial_condition']
@@ -92,7 +93,7 @@ class Simulation:
 
         self.results = results.y
         self.t = results.t
-        
+        self.simulation_status = 1
 
 
 
