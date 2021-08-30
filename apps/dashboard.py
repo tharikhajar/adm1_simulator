@@ -1,5 +1,6 @@
 import dash
 import dash_core_components as dcc
+from dash_core_components.Loading import Loading
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
@@ -17,9 +18,25 @@ layout = html.Div([
             style={"textAlign": "center"})),
 
     html.Div(
-        dcc.Graph(
+        dcc.Loading(children=[
+
+        html.Div([
+            dcc.Dropdown(
+                id='first_axis',
+                options=[],
+                value='S_gas_ch4'
+            ),
+            dcc.Dropdown(
+                id='second_axis',
+                options=[],
+                value='q_gas'
+            )
+        ]),
+        html.Div(
+            dcc.Graph(
             id='teste'
-        )
+        ))
+        ])
     ),
 
     html.Div([

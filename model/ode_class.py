@@ -1,5 +1,6 @@
 # File dedicated for the implementation of the ODE model
 #%%
+from dash_html_components.Var import Var
 import numpy as np
 from importlib import reload
 from scipy.integrate import solve_ivp
@@ -97,12 +98,56 @@ class Simulation:
             atol=np.power(10., -12)
         )
 
+        # Saving the results in the variables objects
         for variable, result in zip(self.data.keys(), results.y):
             self.data[variable].values = result
 
         self.t = results.t
-        
-        self.simulation_status = 1
+
+    def find_steady_state(self):
+        steady_states = []
+
+        for variable in self.data.keys():
+            self.data[variable].find_steady_state()
+            steady_index = self.data[variable].find_steady_state()
+            steady_states.append(steady_index)
+
+        self.steady_state = max(steady_states)
+
+    def calculate_gas_flow_rate(self):
+
+        p_ch4 = self.data['S_gas_ch4'].values
+        p_co2 = self.data['S_gas_co2'].values
+        p_h2 = self.data['S_gas_h2'].values
+
+        Patm = self.phys_par[16]
+        h20 = self.phys_par[17]
+        kp = p_h20 = self.phys_par[18]
+
+        q_values = []
+
+        for ch4, co2, h2 in zip(p_ch4, p_co2, p_h2):
+            pressure = ch4 + co2 + h2 + h20
+            q_gas = kp * (pressure - Patm)
+            if q_gas < 0: q_gas = 0.
+            q_values.append(q_gas)
+
+        q_gas_array = np.array(q_values)
+
+        q_gas_data = Variable(
+            name='Vazão de Gás',
+            unit='m3 / dia',
+            vanilla = False,
+            ionic = False,
+            color='#14213d',
+            values = q_gas_array
+        )
+
+        self.data['q_gas'] = q_gas_data
+
+    def set_simulation_status(self, status):
+        # Used to determine when the charts can be ploted
+        self.simulation_status = status
 
 
 

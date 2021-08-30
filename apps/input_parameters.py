@@ -128,6 +128,7 @@ layout = html.Div([
     html.Br(),
 
     html.Div(id='oi'),
+    html.Div(id='dummy_botao_input'),
 
     html.Div([        
         dcc.Slider( 

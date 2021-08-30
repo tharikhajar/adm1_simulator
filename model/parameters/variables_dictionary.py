@@ -30,6 +30,27 @@ class Variable():
         self.subcategory = subcategory
         self.values = values
 
+    def find_steady_state(self):
+    # Takes in a list of results values for a state and finds when it 
+    # reaches stationary
+    
+        for i in range(len(self.values) - 25):
+            differences = []
+            for j in range(25):
+                average_value = (self.values[i] + self.values[i+j]) / 2
+                differences.append(abs(self.values[i] - self.values[i+j]) / average_value)
+            biggest_difference = max(differences)
+
+            average_end = (self.values[i] + self.values[-1]) / 2
+            difference_to_the_end = abs(self.values[i] - self.values[-1]) / average_end
+
+            if biggest_difference <= 0.00001 and difference_to_the_end <= 0.001:
+                self.steady_index = i
+                return i
+
+        self.steady_index = None
+
+
 variables_data = dict(
     S_su = Variable(
         name = 'Monossacarídeos',
@@ -338,9 +359,9 @@ variables_data = dict(
         subcategory = None
     ),
     S_gas_ch4 = Variable(
-        name = '2a9d8f',
+        name = 'Metano',
         unit = bar,
-        color = '#aacc00',
+        color = '#2a9d8f',
         vanilla = True,
         ionic = False,
         category = gas,
