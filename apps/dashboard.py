@@ -24,12 +24,14 @@ layout = html.Div([
             dcc.Dropdown(
                 id='first_axis',
                 options=[],
-                value='S_gas_ch4'
+                value='S_gas_ch4',
+                searchable=True
             ),
             dcc.Dropdown(
                 id='second_axis',
                 options=[],
-                value='q_gas'
+                value='q_gas',
+                searchable=True
             )
         ]),
         html.Div(
@@ -38,6 +40,25 @@ layout = html.Div([
         ))
         ])
     ),
+
+    # Financial Value
+    html.Div([
+        html.Div([
+            dcc.Input(
+                id='generator_efficiency_input',
+                value=.32, min=0, max=1, step=0.01
+            )
+        ])
+    ]),
+        html.Div([
+        html.Div([
+            dcc.Input(
+                id='energy_price_input',
+                value=0.41, min=0.01, max=5, step=0.01
+            )
+        ]),
+        html.Div(id = 'monthly_savings_div')
+    ]),
 
     html.Div([
     dcc.Link(html.Button(
@@ -54,15 +75,3 @@ layout = html.Div([
 ])
 
 
-
-# @app.callback(Output('teste', 'children'),
-#     [Input('botao_input', 'n_clicks')])
-# def test(n_clicks):
-#     # simulation.calculate_parameters()
-#     # simulation.simulate()
-#     # value = simulation.results[0][0]
-#     palavra = 'oi'
-#     return n_clicks
-
-# if __name__ == '__main__':
-#     app.run_server(debug=False)

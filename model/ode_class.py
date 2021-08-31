@@ -16,7 +16,7 @@ import pandas as pd
 
 import model.parameters.parameters_bsm2
 reload(model.parameters.parameters_bsm2)
-from model.parameters.parameters_bsm2 import BSM2_parameters, BSM2_results
+from model.parameters.parameters_bsm2 import BSM2_parameters, BSM2_results, S_gas_co2, S_gas_h2
 
 import model.ode
 reload(model.ode)
@@ -76,12 +76,13 @@ class Simulation:
         '''
 
   
-        self.feed_composition = self.feed_composition_ratios * self.DQO
+        self.feed_composition = self.feed_composition_ratios * (self.DQO * (self.mass / self.dillution_rate))
 
-        initial_condition = self.initial_condition_ratio * self.DQO_initial_condition # Change to DQO after validation
+        initial_condition = self.initial_condition_ratio * (self.DQO * (self.mass / self.dillution_rate))
         self.initial_condition = np.concatenate((initial_condition, [np.power(10., -1 * self.pH)], self.gas_initial_state))
 
-        self.Q_in = (self.mass * self.dillution_rate) / 24
+        self.Q_in = self.dillution_rate
+
         self.phys_par = np.concatenate((self.phys_par_partial, [self.V_liq, self.V_gas, self.Q_in]))
 
     def simulate(self):
@@ -104,6 +105,26 @@ class Simulation:
 
         self.t = results.t
 
+        # The gas states are solved in concentration. But we usually want to
+        # see it in partial pressure
+
+        R = self.phys_par[0]
+        Top = self.phys_par[2]
+        gases = ['S_gas_ch4', 'S_gas_co2', 'S_gas_h2']
+        gases_denominator = [64, 1, 16]
+        for gas, denominator in zip(gases, gases_denominator):
+            self.data[gas].values = self.data[gas].values * ((R * Top) / denominator)
+
+        # Creating a pH variable based on H+ concentration
+        self.data['pH'] = Variable(
+            name='pH',
+            unit='',
+            vanilla = False,
+            ionic = False,
+            color='#14213d',
+            values = -1 * np.log10(self.data['S_H_ion'].values)
+        ) 
+
     def find_steady_state(self):
         steady_states = []
 
@@ -121,15 +142,15 @@ class Simulation:
         p_h2 = self.data['S_gas_h2'].values
 
         Patm = self.phys_par[16]
-        h20 = self.phys_par[17]
-        kp = p_h20 = self.phys_par[18]
+        h2o = self.phys_par[17]
+        kp = self.phys_par[18]
 
         q_values = []
 
         for ch4, co2, h2 in zip(p_ch4, p_co2, p_h2):
-            pressure = ch4 + co2 + h2 + h20
+            pressure = ch4 + co2 + h2 + h2o
             q_gas = kp * (pressure - Patm)
-            if q_gas < 0: q_gas = 0.
+            # if q_gas < 0: q_gas = 0.
             q_values.append(q_gas)
 
         q_gas_array = np.array(q_values)
@@ -144,6 +165,29 @@ class Simulation:
         )
 
         self.data['q_gas'] = q_gas_data
+
+    def calculate_financial_value(self, energy_price=10, generator_efficiency=0.32):
+        # Calculates the energy generated (kWh) and the savings (BRL) by month
+        # considering the gas flow rate and gas composition at final t
+
+        # Partial Pressures (m-3)
+        p_ch4 = self.data['S_gas_ch4'].values[-1]
+        p_co2 = self.data['S_gas_co2'].values[-1]
+        p_h2 = self.data['S_gas_co2'].values[-1]
+        p_h2o = self.phys_par[17]
+
+        ch4_fraction = p_ch4 / (p_ch4 + p_co2 + p_h2 + p_h2o) # fraction of 1
+
+        calorific_value_methane =  9.97 # kWh/m-3
+        q_gas = self.data['q_gas'].values[-1] # m-3 / day
+        delta_t = 30 # days
+
+        monthly_energy = calorific_value_methane * q_gas * delta_t * ch4_fraction * generator_efficiency
+        monthly_savings = monthly_energy * energy_price
+
+        self.monthly_energy = monthly_energy
+        self.monthly_savings = monthly_savings
+
 
     def set_simulation_status(self, status):
         # Used to determine when the charts can be ploted

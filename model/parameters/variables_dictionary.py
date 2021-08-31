@@ -34,7 +34,7 @@ class Variable():
     # Takes in a list of results values for a state and finds when it 
     # reaches stationary
     
-        for i in range(len(self.values) - 25):
+        for i in range(len(self.values) - 26):
             differences = []
             for j in range(25):
                 average_value = (self.values[i] + self.values[i+j]) / 2

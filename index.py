@@ -23,11 +23,18 @@ from model.ode_class import Simulation
 
 simulation = Simulation('BSM2')
 
-app.layout = html.Div([
+
+index_layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content')
 ])
+app.layout = index_layout
 
+app.validation_layout = html.Div([
+    index_layout,
+    input_parameters.layout,
+    dashboard.layout
+])
 
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
@@ -42,10 +49,32 @@ def display_page(pathname):
         return input_parameters.layout
 
 
-@app.callback(Output('slider_output_container', 'children'),
-    [Input('slider_diluição', 'value')])
-def update_output(value):
-    return 'A diluição é de {} para massa.'.format(value)
+@app.callback([Output('slider_output_container', 'children'),
+    Output('slider_diluição', 'max'),
+    Output('slider_diluição', 'min'),
+    Output('slider_diluição', 'marks'),
+    Output('slider_diluição', 'step')],
+    [Input('slider_diluição', 'value'),
+    Input('massa_dia', 'value'),
+    Input('Volume_Liquido', 'value')])
+def update_output(dillution_rate, mass, V_liq):
+
+    concentration = mass / dillution_rate
+    HRT = round(V_liq / dillution_rate, 1)
+    text_return = 'A concentração da alimentação é de {} kg substrato / m-3. Tempo de retenção hidráulica de {} dias'.format(round(concentration, 2), HRT)
+
+    F_min = V_liq / 1000
+    F_max = V_liq/10
+    color = '#000000'
+    marks = {
+        F_min: {'label': "{}".format(F_min),
+                'style': {'color': color}},
+        F_max: {'label': "{}".format(F_max),
+                'style': {'color': color}}
+    }
+    step_size = F_min
+
+    return text_return, F_max, F_min, marks, step_size
 
 
 @app.callback(Output('oi', 'children'),
@@ -57,11 +86,12 @@ def update_output(value):
     State('Volume_Headspace', 'value'),
     State('slider_diluição', 'value')])
 def simulate_test(n_clicks, DQO, pH, mass, V_liq, V_gas, dillution_rate):
-
+    simulation.set_simulation_status(status=0)
     simulation.update_parameters(DQO, pH, dillution_rate, V_liq, V_gas, mass)
     simulation.calculate_parameters()
     simulation.simulate()
     simulation.calculate_gas_flow_rate()
+    print(simulation.mass)
 
     simulation.set_simulation_status(status=1)
     return ''
@@ -97,7 +127,7 @@ def plot_test(variable_1, variable_2):
             go.Scatter(
                 x=[steady_time, steady_time], y=[min(y), max(y)], 
                 name= 'Estado Estacionário para: ' + variable_name, marker = dict(color=color),
-                mode='lines'
+                mode='lines', line = dict(dash='dash')
                 ),
             secondary_y=axis
         )
@@ -127,6 +157,19 @@ def populate_dropdown(n_clicks):
 def reset_simulation(n_clicks):
     simulation.set_simulation_status(status=0)
     return ''
+
+@app.callback(Output('monthly_savings_div', 'children'), 
+    [Input('generator_efficiency_input', 'value'),
+    Input('energy_price_input', 'value')])
+def financial_calculation(generator_efficiency, energy_price):
+    while simulation.simulation_status == 0:
+        time.sleep(.1)
+    simulation.calculate_financial_value(energy_price=energy_price, generator_efficiency=generator_efficiency)
+    monthly_energy = round(simulation.monthly_energy,0)
+    monthly_savings = round(simulation.monthly_savings, 2)
+    return f'{monthly_energy} kWh gerados, resultando em uma economia de R$ {monthly_savings} ao mês'
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

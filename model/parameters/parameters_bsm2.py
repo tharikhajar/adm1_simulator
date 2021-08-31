@@ -123,6 +123,10 @@ S_gas_h2 = 1.1032*np.power(10.,-5.)
 S_gas_ch4 = 1.6535
 S_gas_co2 = 0.0135
 
+# S_gas_h2 = 1.1032*np.power(10.,-5.) 
+# S_gas_ch4 = 1.1032*np.power(10.,-5.) 
+# S_gas_co2 = 1.1032*np.power(10.,-5.) 
+
 initial_conditions = [
     S_su, #0
     S_aa, #1

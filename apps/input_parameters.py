@@ -26,14 +26,14 @@ layout = html.Div([
 
     html.Div([
 
-        html.H3("Insira o Valor de DQO do composto que será digerido:"),
+        html.H3("Fração de DQO do seu substrato (kg DQO/ kg Total)"),
 
         dcc.Input(
             id = 'DQO',
             type = 'number',
-            value = 125,
+            value = 0.7,
             debounce = True,
-            min = 0 , max = 10000, step = 0.01,
+            min = 0 , max = 1, step = 0.001,
             minLength = 0, maxLength = 100,
             autoComplete = 'on',
             disabled = False,
@@ -46,26 +46,7 @@ layout = html.Div([
 
     html.Br(),
 
-        html.H3("Insira o Valor do pH do composto que será digerido:"),
-
-        dcc.Input(
-            id = 'pH',
-            type = 'number',
-            value = 7,
-            debounce = True,
-            min = 0 , max = 14, step = 1,
-            minLength = 0, maxLength = 100,
-            autoComplete = 'on',
-            disabled = False,
-            readOnly = False,
-            required= True,
-            size = "100",
-            persistence = True, persistence_type = 'session'
-        ),
-    
-    html.Br(),
-
-        html.H3("Insira a quantidade de massa (kg) inserida por dia"),
+        html.H3("Massa total de substrato gerado (kg / dia)"),
 
         dcc.Input(            
             id = 'massa_dia',
@@ -81,10 +62,29 @@ layout = html.Div([
             size = "50",
             persistence = True, persistence_type = 'session'          
         ),
+    
+    html.Br(),
+
+        html.H3("Valor do pH do substrato"),
+
+        dcc.Input(
+            id = 'pH',
+            type = 'number',
+            value = 7,
+            debounce = True,
+            min = 0 , max = 14, step = 0.1,
+            minLength = 0, maxLength = 100,
+            autoComplete = 'on',
+            disabled = False,
+            readOnly = False,
+            required= True,
+            size = "100",
+            persistence = True, persistence_type = 'session'
+        ),
 
     html.Br(),
 
-        html.H3("Insira o volume líquido (m³) do biodigestor"),
+        html.H3("Volume da parte líquida do biodigestor (m³)"),
 
         dcc.Input(            
             id = 'Volume_Liquido',
@@ -133,11 +133,15 @@ layout = html.Div([
     html.Div([        
         dcc.Slider( 
             id = 'slider_diluição',
-            min = 0,
-            max = 20, # Dependes on unity  used L or m³?
-            step = 1,
+            min = 0.1,
+            max = 200, # Dependes on unity  used L or m³?
+            step = 0.1,
             value = 10,
-            persistence = True, persistence_type = 'session'
+            persistence = True, persistence_type = 'session',
+            tooltip={
+                    'always_visible': True,
+                    'placement': 'bottom'
+                }
         ),
     ]),
 
