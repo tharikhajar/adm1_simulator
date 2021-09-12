@@ -23,9 +23,9 @@ reload(model.ode_class)
 
 from model.ode_class import Simulation
 
-import assets.colors
-reload(assets.colors)
-from assets.colors import color_p
+import assets.style
+reload(assets.style)
+from assets.style import color_p
 
 simulation = Simulation('BSM2')
 

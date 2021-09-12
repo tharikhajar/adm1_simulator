@@ -8,9 +8,9 @@ from dash_html_components.Br import Br
 from app import app
 
 from importlib import reload
-import assets.colors
-reload(assets.colors)
-from assets.colors import color_p
+import assets.style
+reload(assets.style)
+from assets.style import color_p, input_style
 
 
 
@@ -66,7 +66,8 @@ layout = dbc.Container([
                         min = 0 , max = 10**7, step = 1,
                         required= True,
                         size = "50",
-                        persistence = True, persistence_type = 'session'          
+                        persistence = True, persistence_type = 'session',
+                        style={'border-radius':input_style['border-radius']}          
                     ),
                 ], className="col-xs-1 text-center"),
                 dbc.Col([
@@ -82,7 +83,8 @@ layout = dbc.Container([
                         min = 0 , max = 14, step = 0.1,
                         required= True,
                         size = "100",
-                        persistence = True, persistence_type = 'session'
+                        persistence = True, persistence_type = 'session',
+                        style={'border-radius':input_style['border-radius']}
                     )
                 ], className="col-xs-1 text-center")
                 #endregion
@@ -180,24 +182,23 @@ layout = dbc.Container([
                     width=12
                 ),
                 dbc.Col(
-                    dcc.Link(html.Button(
+                    dcc.Link(dbc.Button(
+                        'Simular',
                         id='botao_simular',
-                        n_clicks = 0
+                        n_clicks = 0,
+                        size='lg',
+                        style={'background-color': color_p['4purple']}
                     ), href='/results')
                 , width=12,
-                style={'height':100}),
+                style={'height':100},
+                className='text-center'),
+
+                #Dummy
                 html.Div(id='oi')
             ]),
-
             ], width=6,
             style={'height': '100vh'}),
 
     ], style={'height': '100vh'})
     #End Main Row
 ], fluid=True)
-
-
-
-# if __name__ == '__main__':
-#     app.run_server(debug=False)
-
