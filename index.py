@@ -1,8 +1,10 @@
+# Dash Imports
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-from dash_html_components.Font import Font
-import dash
+
+
+
 from numpy.core.fromnumeric import var
 from app import app
 from app import server
@@ -21,6 +23,10 @@ reload(model.ode_class)
 
 from model.ode_class import Simulation
 
+import assets.colors
+reload(assets.colors)
+from assets.colors import color_p
+
 simulation = Simulation('BSM2')
 
 
@@ -36,6 +42,8 @@ app.validation_layout = html.Div([
     dashboard.layout
 ])
 
+# Pages url callback
+#region
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
@@ -47,8 +55,13 @@ def display_page(pathname):
         return input_parameters.layout
     else:
         return input_parameters.layout
+#endregion
 
+# Homepage
+#region
 
+#Sldier de Vazão
+#region
 @app.callback([Output('slider_output_container', 'children'),
     Output('slider_diluição', 'max'),
     Output('slider_diluição', 'min'),
@@ -75,11 +88,57 @@ def update_output(dillution_rate, mass, V_liq):
     step_size = F_min
 
     return text_return, F_max, F_min, marks, step_size
+#endregion
+
+# Volume
+@app.callback(Output('bar_volume_biodigestor', 'figure'),
+            [Input('Volume_Liquido', 'value'),
+            Input('Volume_Headspace', 'value')])
+def plot_biodigestor_volume(V_liq, V_gas):
+
+    data = [
+        go.Bar(name='Volume de Líquido', x=[1], y=[V_liq],
+            hovertemplate='%{label}', marker=dict(color=color_p['4purple'])),
+        go.Bar(name='Volume de Gás', x=[1], y=[V_gas],
+            hovertemplate='%{label}', marker=dict(color=color_p['4green'])),
+        ]
+    config=dict(displayModeBar=True)
+    figbar = go.Figure(data=data)
+
+    figbar.update_layout(
+        xaxis = dict(
+            showticklabels=False
+        ),
+        yaxis = dict(
+            showticklabels=False
+        ),
+        showlegend=False,
+        barmode='stack',
+        width=120,
+        height = 300, 
+        margin=dict(
+            l=0,
+            r=0,
+            b=0,
+            t=0,
+            pad=4
+        ),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)'
+        )
 
 
+    return figbar
+
+
+
+#endregion
+
+# Simulate
+#region
 @app.callback(Output('oi', 'children'),
     [Input('botao_simular', 'n_clicks')],
-    [State('DQO', 'value'),
+    [State('slider_DQO', 'value'),
     State('pH', 'value'),
     State('massa_dia', 'value'),
     State('Volume_Liquido', 'value'),
@@ -91,11 +150,13 @@ def simulate_test(n_clicks, DQO, pH, mass, V_liq, V_gas, dillution_rate):
     simulation.calculate_parameters()
     simulation.simulate()
     simulation.calculate_gas_flow_rate()
-    print(simulation.mass)
 
     simulation.set_simulation_status(status=1)
     return ''
+#endregion
 
+# Dashboard
+#region
 @app.callback(Output('teste', 'figure'),
     [Input('first_axis', 'value'),
     Input('second_axis', 'value')])
@@ -168,7 +229,7 @@ def financial_calculation(generator_efficiency, energy_price):
     monthly_energy = round(simulation.monthly_energy,0)
     monthly_savings = round(simulation.monthly_savings, 2)
     return f'{monthly_energy} kWh gerados, resultando em uma economia de R$ {monthly_savings} ao mês'
-
+#endregion
 
 
 if __name__ == '__main__':

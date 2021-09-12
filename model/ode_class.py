@@ -75,7 +75,6 @@ class Simulation:
         '''Update object with parameters in the shape required by ODE function
         '''
 
-  
         self.feed_composition = self.feed_composition_ratios * (self.DQO * (self.mass / self.dillution_rate))
 
         initial_condition = self.initial_condition_ratio * (self.DQO * (self.mass / self.dillution_rate))

@@ -1,13 +1,18 @@
 #Importing Libraries
 from dash_core_components.Slider import Slider
-from dash_html_components.H3 import H3
-
-
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
-import pathlib
+from dash_html_components.Br import Br
+
 from app import app
+
+from importlib import reload
+import assets.colors
+reload(assets.colors)
+from assets.colors import color_p
+
+
 
 # app = dash.Dash(__name__)
 
@@ -21,141 +26,178 @@ V_digestor_gas = V_digestor_liq * 0.3 # m³
 
 # Layout
 
-layout = html.Div([
-    html.H1('Insira os dados solicitados para a simulação: ', style={"textAlign": "center"}),
+layout = dbc.Container([
+    #Main Row
+    dbc.Row([
 
-    html.Div([
+        # Text Col
+        dbc.Col([
+        #region
+            html.H2('''
+            Simulalor de Biodigestão Anaeróbica
+            ''', style={"textAlign": "center"}),
+            html.H6('''
+            Texto descritivo do programa, referência etc
+            ''', style={"textAlign": "center"})
+        ], width={'size': 6,},
+            align='center',
+            className='text-white',
+            style={
+                'height': '100vh',
+                'background-color': color_p['4green']}),
+        #endregion
+        # Text Col End
 
-        html.H3("Fração de DQO do seu substrato (kg DQO/ kg Total)"),
+        # Parameters Col
+        dbc.Col([
+            # Mass and pH
+            #region
+            dbc.Row([
+                dbc.Col([
+                    html.H6(
+                        'Massa de Substrato Produzido por Dia (kg/dia)',
+                        style={"textAlign": "center"}
+                        ),
+                    dcc.Input(            
+                        id = 'massa_dia',
+                        type = 'number',
+                        value = 10,
+                        debounce = True,
+                        min = 0 , max = 10**7, step = 1,
+                        required= True,
+                        size = "50",
+                        persistence = True, persistence_type = 'session'          
+                    ),
+                ], className="col-xs-1 text-center"),
+                dbc.Col([
+                    html.H6(
+                        'pH',
+                        style={"textAlign": "center"}
+                        ),
+                    dcc.Input(
+                        id = 'pH',
+                        type = 'number',
+                        value = 7,
+                        debounce = True,
+                        min = 0 , max = 14, step = 0.1,
+                        required= True,
+                        size = "100",
+                        persistence = True, persistence_type = 'session'
+                    )
+                ], className="col-xs-1 text-center")
+                #endregion
+            ]),
 
-        dcc.Input(
-            id = 'DQO',
-            type = 'number',
-            value = 0.7,
-            debounce = True,
-            min = 0 , max = 1, step = 0.001,
-            minLength = 0, maxLength = 100,
-            autoComplete = 'on',
-            disabled = False,
-            readOnly = False,
-            required= True,
-            size = "100",
-            persistence = True, persistence_type = 'session'
-        
-        ),
+            html.Br(),
+            html.Br(),
+            html.Br(),
+            html.Br(),
+            # Volume
+            #region
+            dbc.Row([
 
-    html.Br(),
+                dbc.Col([
 
-        html.H3("Massa total de substrato gerado (kg / dia)"),
+                        html.H6("Volume do Headspace (m³)"),
 
-        dcc.Input(            
-            id = 'massa_dia',
-            type = 'number',
-            value = 10,
-            debounce = True,
-            min = 0 , max = 100000000, step = 1,
-            minLength = 0, maxLength = 50,
-            autoComplete = 'on',
-            disabled = False,
-            readOnly = False,
-            required= True,
-            size = "50",
-            persistence = True, persistence_type = 'session'          
-        ),
-    
-    html.Br(),
+                        dcc.Input(            
+                            id = 'Volume_Headspace',
+                            type = 'number',
+                            value = V_digestor_gas,
+                            debounce = True,
+                            min = 0 , max = 10**6, step = 1,
+                            required= True,
+                            size = "100",
+                            persistence = True, persistence_type = 'session'
+                        ),
 
-        html.H3("Valor do pH do substrato"),
+                        html.H6("Volume Líquido (m³)"),
 
-        dcc.Input(
-            id = 'pH',
-            type = 'number',
-            value = 7,
-            debounce = True,
-            min = 0 , max = 14, step = 0.1,
-            minLength = 0, maxLength = 100,
-            autoComplete = 'on',
-            disabled = False,
-            readOnly = False,
-            required= True,
-            size = "100",
-            persistence = True, persistence_type = 'session'
-        ),
+                        dcc.Input(            
+                            id = 'Volume_Liquido',
+                            type = 'number',
+                            value = V_digestor_liq,
+                            debounce = True,
+                            min = 0 , max = 10**6, step = 1,
+                            required= True,
+                            size = "100",
+                            persistence = True, persistence_type = 'session'
+                        ),                  
+                    ], className='col-xs-6 text-center'),
 
-    html.Br(),
+                dbc.Col([
+                        dcc.Graph(
+                            id='bar_volume_biodigestor',
+                            config={'displayModeBar': False}
+                            )
+                     ], className='col-xs-6 text-center')
+                    
+                ]),
+            #endregion
+            #End Volume
 
-        html.H3("Volume da parte líquida do biodigestor (m³)"),
+            #DQO
+            html.Br(),
+            dbc.Row([
+                dbc.Col(
+                    html.H6('Fração de DQO (kg DQO/ kg Substrato (massa seca)',
+                    className='text-center'
+                    ),width=12),
+                dbc.Col(
+                dcc.Slider( 
+                    id = 'slider_DQO',
+                    min = 0.1,
+                    max = 1,
+                    step = 0.01,
+                    value = 0.7,
+                    persistence = True, persistence_type = 'session',
+                    tooltip={
+                            'always_visible': True,
+                            'placement': 'bottom'
+                        }
+                ),width=12)
+            ]),
+            dbc.Row([
+                dbc.Col(
+                    html.H6('Vazão de Alimentação (m³/dia)',
+                    className='text-center'
+                    ),width=12),
+                dbc.Col(
+                dcc.Slider( 
+                    id = 'slider_diluição',
+                    min = 1,
+                    max = 1000,
+                    step = 1,
+                    value = 50,
+                    persistence = True, persistence_type = 'session',
+                    tooltip={
+                            'always_visible': True,
+                            'placement': 'bottom'
+                        }
+                ),width=12),
+                dbc.Col(
+                    id='slider_output_container',
+                    width=12
+                ),
+                dbc.Col(
+                    dcc.Link(html.Button(
+                        id='botao_simular',
+                        n_clicks = 0
+                    ), href='/results')
+                , width=12,
+                style={'height':100}),
+                html.Div(id='oi')
+            ]),
 
-        dcc.Input(            
-            id = 'Volume_Liquido',
-            type = 'number',
-            value = V_digestor_liq,
-            debounce = True,
-            min = 0 , max = 100000000, step = 1,
-            minLength = 0, maxLength = 50,
-            autoComplete = 'on',
-            disabled = False,
-            readOnly = False,
-            required= True,
-            size = "100",
-            persistence = True, persistence_type = 'session'
-        ),
+            ], width=6,
+            style={'height': '100vh'}),
 
-    html.Br(),
+    ], style={'height': '100vh'})
+    #End Main Row
+], fluid=True)
 
-        html.H3("Insira o volume do headspace (m³) do biodigestor"),
 
-        dcc.Input(            
-            id = 'Volume_Headspace',
-            type = 'number',
-            value = V_digestor_gas,
-            debounce = True,
-            min = 0 , max = 100000000, step = 1,
-            minLength = 0, maxLength = 50,
-            autoComplete = 'on',
-            disabled = False,
-            readOnly = False,
-            required= True,
-            size = "100",
-            persistence = True, persistence_type = 'session'
-        ),                      
-    ]),
-
-    html.Br(),
-
-    html.H3("Utilize o slider abaixo para selecionar a diluição desejada:"),
-
-    html.Br(),
-
-    html.Div(id='oi'),
-    html.Div(id='dummy_botao_input'),
-
-    html.Div([        
-        dcc.Slider( 
-            id = 'slider_diluição',
-            min = 0.1,
-            max = 200, # Dependes on unity  used L or m³?
-            step = 0.1,
-            value = 10,
-            persistence = True, persistence_type = 'session',
-            tooltip={
-                    'always_visible': True,
-                    'placement': 'bottom'
-                }
-        ),
-    ]),
-
-    html.Div(id='slider_output_container'),
-
-    html.Br(),
-    html.Br(),
-
-        dcc.Link(html.Button( #como conectar esse botão ao acionamento da resolução do modelo ADM1?
-            'SIMULAR', 
-            id='botao_simular',
-            n_clicks = 0,
-        ), href='/results'),
-])
 
 # if __name__ == '__main__':
 #     app.run_server(debug=False)
+

@@ -8,7 +8,7 @@ def array_to_dict(results):
     
     '''
     keys = [
-        'Monosaccharides',
+        'Monossacarídeos',
         'Aminoacids',
         'Fatty Acids',
         'Valeric Acid',
@@ -30,17 +30,17 @@ def array_to_dict(results):
         'Acetic Acid Consumers',
         'Hydrogen Consumers',
         'Composite Inerts',
-        'Inorganic Carbon',
-        'Inorganic Nitrogen',
-        'Cations',
-        'Anions',
-        'Protons',
         'Valeric Conjugate',
         'Butyric Conjugate',
         'Propionic Conjugate',
         'Acetic Conjugate',
+        'Inorganic Carbon',
+        'Inorganic Nitrogen',
+        'Cations',
+        'Anions',
         'Carbonic Acid',
         'Ammonia',
+        'Protons',
         'Hydrogen (Gas)',
         'Methane (Gas)',
         'Carbon Dioxide (Gas)'
