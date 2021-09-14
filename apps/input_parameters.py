@@ -4,6 +4,8 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash_html_components.Br import Br
+from dash_html_components.Div import Div
+from dash_html_components.H6 import H6
 
 from app import app
 
@@ -36,9 +38,30 @@ layout = dbc.Container([
             html.H2('''
             Simulalor de Biodigestão Anaeróbica
             ''', style={"textAlign": "center"}),
+
+            html.Br(),
+
             html.H6('''
-            Texto descritivo do programa, referência etc
-            ''', style={"textAlign": "center"})
+            Este programa simula a biodigestão anaeróbia pelo modelo ADM1, retornando diversas viaráveis cálculadas pelo modelo, 
+            como a produção de biogás, além de retornar uma estimativa econômica.''', style={"textAlign": "justify"}),
+                
+            html.Br(),
+
+            html.H6('''
+            Os campos requiridos ao lado prezam a simplicidade do uso do simulador, onde valores mais específicos (por exemplo, DQO de componentes
+            específicos) se baseiam na literatura, mantendo a fidelidade ao processo dinâmico da biodigestão anaeróbia de efluentes domésticos.
+            Sinta-se livre para alterar os valores de acordo com a sua necessidade.''', 
+            style={"textAlign": "justify"}),
+
+            html.Br(),
+
+            html.H6('''
+            As equações, parâmetros e variáveis se baseiam no modelo ADM1, desenvolvido pelo grupo IWA, e foram retiradas do artigo técnico de 
+            ROSEN, C. e JEPPSSON, U "Aspects on ADM1 Implementation within the BSM2 Framework. Technical report" de Maio de 2006, que abordou a
+            implementação do modelo matemático ADM1 para efluentes domésticos. 
+
+            ''', style={"textAlign": "justify"}),
+
         ], width={'size': 6,},
             align='center',
             className='text-white',
@@ -61,7 +84,7 @@ layout = dbc.Container([
                     dcc.Input(            
                         id = 'massa_dia',
                         type = 'number',
-                        value = 10,
+                        value = 100,
                         debounce = True,
                         min = 0 , max = 10**7, step = 1,
                         required= True,
@@ -169,7 +192,7 @@ layout = dbc.Container([
                     id = 'slider_diluição',
                     min = 1,
                     max = 1000,
-                    step = 1,
+                    step = 0.01,
                     value = 50,
                     persistence = True, persistence_type = 'session',
                     tooltip={

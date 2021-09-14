@@ -60,7 +60,7 @@ def display_page(pathname):
 # Homepage
 #region
 
-#Sldier de Vazão
+#Slider da Vazão de alimentação e cálculo do tempo de retenção
 #region
 @app.callback([Output('slider_output_container', 'children'),
     Output('slider_diluição', 'max'),
