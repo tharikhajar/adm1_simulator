@@ -78,7 +78,7 @@ layout = dbc.Container([
             dbc.Row([
                 dbc.Col([
                     html.H6(
-                        'Massa de Substrato Produzido por Dia (kg/dia)',
+                        'Massa de Substrato Produzido por Dia (kg massa úmida/dia)',
                         style={"textAlign": "center"}
                         ),
                     dcc.Input(            
@@ -165,7 +165,7 @@ layout = dbc.Container([
             html.Br(),
             dbc.Row([
                 dbc.Col(
-                    html.H6('Fração de DQO (kg DQO/ kg Substrato (massa seca)',
+                    html.H6('Fração de DQO (kg DQO/ kg substrato massa úmida)',
                     className='text-center'
                     ),width=12),
                 dbc.Col(
