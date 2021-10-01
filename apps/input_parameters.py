@@ -1,4 +1,5 @@
 #Importing Libraries
+from dash_bootstrap_components._components.Col import Col
 from dash_core_components.Slider import Slider
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
@@ -36,7 +37,7 @@ layout = dbc.Container([
         dbc.Col([
         #region
             html.H2('''
-            Simulalor de Biodigestão Anaeróbica
+            Simulador de Biodigestão Anaeróbica
             ''', style={"textAlign": "center"}),
 
             html.Br(),
@@ -59,10 +60,20 @@ layout = dbc.Container([
             As equações, parâmetros e variáveis se baseiam no modelo ADM1, desenvolvido pelo grupo IWA, e foram retiradas do artigo técnico de 
             ROSEN, C. e JEPPSSON, U "Aspects on ADM1 Implementation within the BSM2 Framework. Technical report" de Maio de 2006, que abordou a
             implementação do modelo matemático ADM1 para efluentes domésticos. 
+            ''', 
+            style={"textAlign": "justify"}),
 
-            ''', style={"textAlign": "justify"}),
+            html.Br(),
 
-        ], width={'size': 6,},
+            html.H4(''' DOI do artigo
+            ''', 
+            style={"textAlign": "center"}),
+
+            html.H6('''
+            10.1016/j.watres.2014.12.026
+            ''', style={"textAlign": "center"}),
+
+        ], width={'size': 4,},
             align='center',
             className='text-white',
             style={
@@ -79,12 +90,12 @@ layout = dbc.Container([
                 dbc.Col([
                     html.H6(
                         'Massa de Substrato Produzido por Dia (kg massa úmida/dia)',
-                        style={"textAlign": "center"}
+                        style={"textAlign": "center", 'marginBottom': 4, 'marginTop': 4}
                         ),
                     dcc.Input(            
                         id = 'massa_dia',
                         type = 'number',
-                        value = 100,
+                        value = 250,
                         debounce = True,
                         min = 0 , max = 10**7, step = 1,
                         required= True,
@@ -92,12 +103,12 @@ layout = dbc.Container([
                         persistence = True, persistence_type = 'session',
                         style={'border-radius':input_style['border-radius']}          
                     ),
-                ], className="col-xs-1 text-center"),
+                ], className="col-xs-1 text-center", align="between",),
+
                 dbc.Col([
                     html.H6(
                         'pH',
-                        style={"textAlign": "center"}
-                        ),
+                        style={"textAlign": "center", 'marginBottom': 4, 'marginTop': 4}),
                     dcc.Input(
                         id = 'pH',
                         type = 'number',
@@ -107,22 +118,44 @@ layout = dbc.Container([
                         required= True,
                         size = "100",
                         persistence = True, persistence_type = 'session',
-                        style={'border-radius':input_style['border-radius']}
+                        style={'border-radius':input_style['border-radius'],}
                     )
-                ], className="col-xs-1 text-center")
-                #endregion
-            ]),
+                ], className="col-xs-1 text-center",
+                   width = 6,),
+                dbc.Col(
+                    html.Div(
+                        html.Br(),
+                    ),
+                    width=12),
+                dbc.Col(
+    
+                    html.H6('Fração de DQO (kg DQO/ kg substrato massa úmida)',
+                    className='text-center', style={"marginBottom": 10, "maginTop": 0}
+                    ),width=12),
 
-            html.Br(),
-            html.Br(),
-            html.Br(),
-            html.Br(),
+                dbc.Col(
+                    dcc.Slider( 
+                        id = 'slider_DQO',
+                        min = 0.1,
+                        max = 1,
+                        step = 0.01,
+                        value = 0.7,
+                        persistence = True, persistence_type = 'session',
+                        tooltip={
+                            'always_visible': True,
+                            'placement': 'bottom'
+                        }
+                ),width=12, ),
+            ],
+            justify="start", style = {'background-color': color_p['grey1']}, align ='strech'),              
+
             # Volume
             #region
             dbc.Row([
-
+                dbc.Col(width=3),
                 dbc.Col([
 
+                        html.Br(),
                         html.H6("Volume do Headspace (m³)"),
 
                         dcc.Input(            
@@ -133,10 +166,16 @@ layout = dbc.Container([
                             min = 0 , max = 10**6, step = 1,
                             required= True,
                             size = "100",
-                            persistence = True, persistence_type = 'session'
+                            persistence = True, persistence_type = 'session', 
+                            style={'border-radius':input_style['border-radius']}
                         ),
-
-                        html.H6("Volume Líquido (m³)"),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
 
                         dcc.Input(            
                             id = 'Volume_Liquido',
@@ -146,42 +185,29 @@ layout = dbc.Container([
                             min = 0 , max = 10**6, step = 1,
                             required= True,
                             size = "100",
-                            persistence = True, persistence_type = 'session'
-                        ),                  
-                    ], className='col-xs-6 text-center'),
+                            persistence = True, persistence_type = 'session',
+                            style={'border-radius':input_style['border-radius']}
+                        ),  
+                        html.H6("Volume do Líquido (m³)"),
+                    ], 
+                className='col-xs-6 text-center', width = 3),
 
+                html.Br(),
                 dbc.Col([
                         dcc.Graph(
                             id='bar_volume_biodigestor',
                             config={'displayModeBar': False}
                             )
-                     ], className='col-xs-6 text-center')
+                     ], className='col-xs-6 text-center'),
+
+                dbc.Col(width=3)
                     
-                ]),
+                ], justify="start", style = {'background-color': color_p['grey2']}, align ='center'),
             #endregion
             #End Volume
 
             #DQO
             html.Br(),
-            dbc.Row([
-                dbc.Col(
-                    html.H6('Fração de DQO (kg DQO/ kg substrato massa úmida)',
-                    className='text-center'
-                    ),width=12),
-                dbc.Col(
-                dcc.Slider( 
-                    id = 'slider_DQO',
-                    min = 0.1,
-                    max = 1,
-                    step = 0.01,
-                    value = 0.7,
-                    persistence = True, persistence_type = 'session',
-                    tooltip={
-                            'always_visible': True,
-                            'placement': 'bottom'
-                        }
-                ),width=12)
-            ]),
             dbc.Row([
                 dbc.Col(
                     html.H6('Vazão de Alimentação (m³/dia)',
@@ -202,8 +228,15 @@ layout = dbc.Container([
                 ),width=12),
                 dbc.Col(
                     id='slider_output_container',
-                    width=12
+                    width=12,
+                    align = 'center',
+                    style = {'textAlign': 'center'},
                 ),
+
+                html.Br(),
+                html.Br(),
+                html.Br(),
+
                 dbc.Col(
                     dcc.Link(dbc.Button(
                         'Simular',
@@ -219,9 +252,9 @@ layout = dbc.Container([
                 #Dummy
                 html.Div(id='oi')
             ]),
-            ], width=6,
+            ], width=8,
             style={'height': '100vh'}),
 
-    ], style={'height': '100vh'})
+    ], style={'height': '100vh', 'background-color': color_p['grey3']})
     #End Main Row
 ], fluid=True)

@@ -74,7 +74,7 @@ def update_output(dillution_rate, mass, V_liq):
 
     concentration = mass / dillution_rate
     HRT = round(V_liq / dillution_rate, 1)
-    text_return = 'A concentração da alimentação é de {} kg substrato / m-3. Tempo de retenção hidráulica de {} dias'.format(round(concentration, 2), HRT)
+    text_return = 'A concentração da alimentação é de {} kg de substrato por m³. O tempo de retenção hidráulica é de {} dias'.format(round(concentration, 2), HRT)
 
     F_min = V_liq / 1000
     F_max = V_liq/10
@@ -228,7 +228,7 @@ def financial_calculation(generator_efficiency, energy_price):
     simulation.calculate_financial_value(energy_price=energy_price, generator_efficiency=generator_efficiency)
     monthly_energy = round(simulation.monthly_energy,0)
     monthly_savings = round(simulation.monthly_savings, 2)
-    return f'{monthly_energy} kWh gerados, resultando em uma economia de R$ {monthly_savings} ao mês'
+    return f'{monthly_energy} kWh gerados por mês, resultando em uma economia de R$ {monthly_savings} ao mês.'
 #endregion
 
 
