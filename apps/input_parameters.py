@@ -65,13 +65,10 @@ layout = dbc.Container([
 
             html.Br(),
 
-            html.H4(''' DOI do artigo
-            ''', 
-            style={"textAlign": "center"}),
-
-            html.H6('''
-            10.1016/j.watres.2014.12.026
-            ''', style={"textAlign": "center"}),
+            html.H6(
+            html.Label(['Download do Artigo: ', html.A(' researchgate', href='https://www.researchgate.net/publication/228684581_Aspects_on_ADM1_Implementation_within_the_BSM2_Framework/link/0912f513753f554db7000000/download',
+            style = {"color": '#2F183C'})])
+            , style={"textAlign": "center"}),
 
         ], width={'size': 4,},
             align='center',

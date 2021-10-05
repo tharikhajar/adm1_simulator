@@ -18,49 +18,6 @@ from app import app
 layout = dbc.Container([
     #Main Row
     dbc.Row([
-
-        #Simulation Results Col
-        dbc.Col([
-            #region
-            dbc.Row([
-                #Title
-                dbc.Col([
-                    html.H1(
-                    "Resultados da simulação",
-                    style={"textAlign": "center"}
-                    ),
-                ],
-                className="col-xs-1 text-center", align="center", width = 12
-                ),
-                #Dropdowns
-                dbc.Col([
-                    dcc.Dropdown(
-                    id='first_axis',
-                    options=[],
-                    value='S_gas_ch4',
-                    searchable=True
-                    ),
-                    dcc.Dropdown(
-                    id='second_axis',
-                    options=[],
-                    value='q_gas',
-                    searchable=True
-                    ),
-                ],
-                className="col-xs-1 text-center", align="start", width = 12),
-                #Graph
-                dbc.Col(
-                    dcc.Graph( 
-                    id='teste'),
-                className="col-xs-1 text-center", align="center", width = 12),
-            ]),
-        ],
-        width = 10, 
-        style={'height': '100vh'},
-        align='center',
-        ),
-        #endregion
-
         #Financial Values Col
         #region
         dbc.Col([
@@ -78,7 +35,8 @@ layout = dbc.Container([
                     ),
                     dcc.Input(
                         id='generator_efficiency_input',
-                        value=.32, min=0, max=1, step=0.01
+                        value=.32, min=0, max=1, step=0.01,
+                        style={"width": 230, "height": 30, 'text-align': 'center', 'border-radius':input_style['border-radius']},
                     ),
                 ], align = 'center'),
                 #Energy Price Input
@@ -94,7 +52,8 @@ layout = dbc.Container([
                     ),
                     dcc.Input(
                         id='energy_price_input',
-                        value=0.41, min=0.01, max=5, step=0.01
+                        value=0.41, min=0.01, max=5, step=0.01,
+                        style={"width": 230, "height": 30, 'text-align': 'center','border-radius':input_style['border-radius']},
                     ),
                 ], width = 12),
                 
@@ -109,7 +68,8 @@ layout = dbc.Container([
                 html.Br(),
 
                 #Financial overview text
-                html.Div(id = 'monthly_savings_div'),
+                html.Div(id = 'monthly_savings_div', 
+                style = {"color": "black", "textAlign": "center"}),
                 #Buttons
                 dbc.Col([
 
@@ -138,7 +98,52 @@ layout = dbc.Container([
                     ),
                 ], className="col-xs-1 text-center", align="start", width = 12)
             ])
-        ], width = 2, style={'height': '100vh', 'background-color': color_p['grey3']})
+        ], width = 2, style={'height': '100vh', 'background-color': color_p['grey3']}),
+        #endregion
+
+        #Simulation Results Col
+        dbc.Col([
+            #region
+            dbc.Row([
+                #Title
+                dbc.Col([
+                    html.H1(
+                    "Resultados da simulação",
+                    style={"textAlign": "center"}
+                    ),
+                ],
+                className="col-xs-1 text-center", align="center", width = 12
+                ),
+                #Dropdowns
+                dbc.Col([
+                    dcc.Dropdown(
+                    id='first_axis',
+                    options=[],
+                    value='S_gas_ch4',
+                    searchable=True,
+                    style=dict(width='90%'),
+                    ),
+                    dcc.Dropdown(
+                    id='second_axis',
+                    options=[],
+                    value='q_gas',
+                    searchable=True,
+                    style=dict(width='90%'),
+                    
+                    ),
+                ], style=dict(display='flex'),
+                className="col-xs-1 text-center", align="start", width = 12),
+                #Graph
+                dbc.Col(
+                    dcc.Graph( 
+                    id='teste'),
+                className="col-xs-1 text-center", align="center", width = 12),
+            ]),
+        ],
+        width = 10, 
+        style={'height': '100vh'},
+        align='center',
+        ),
         #endregion
     ]),
 #End Main Row    
