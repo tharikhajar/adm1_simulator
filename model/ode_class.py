@@ -165,7 +165,7 @@ class Simulation:
 
         self.data['q_gas'] = q_gas_data
 
-    def calculate_financial_value(self, energy_price=10, generator_efficiency=0.32):
+    def calculate_financial_value(self, energy_price=0.41, generator_efficiency=0.32):
         # Calculates the energy generated (kWh) and the savings (BRL) by month
         # considering the gas flow rate and gas composition at final t
 

@@ -35,7 +35,8 @@ layout = dbc.Container([
                     ),
                     dcc.Input(
                         id='generator_efficiency_input',
-                        value=.32, min=0, max=1, step=0.01,
+                        type='number',
+                        value=.32, min=0, max=1, step=0.01, debounce=True,
                         style={"width": 230, "height": 30, 'text-align': 'center', 'border-radius':input_style['border-radius']},
                     ),
                 ], align = 'center'),
@@ -52,7 +53,8 @@ layout = dbc.Container([
                     ),
                     dcc.Input(
                         id='energy_price_input',
-                        value=0.41, min=0.01, max=5, step=0.01,
+                        type="number",
+                        value=0.41, min=0.01, max=5, step=0.01, debounce=True,
                         style={"width": 230, "height": 30, 'text-align': 'center','border-radius':input_style['border-radius']},
                     ),
                 ], width = 12),
@@ -136,9 +138,26 @@ layout = dbc.Container([
                 #Graph
                 dbc.Col(
                     dcc.Graph( 
-                    id='teste'),
+                    id='time_series'),
                 className="col-xs-1 text-center", align="center", width = 12),
             ]),
+            dbc.Row([
+                dbc.Col([
+                    dcc.Dropdown(
+                    id='area_chart_group',
+                    options=[],
+                    value='Fase Gasosa',
+                    searchable=True,
+                    style=dict(width='90%'),
+                    )
+                ], style=dict(display='flex'),
+                className="col-xs-1 text-center", align="start", width = 12),
+
+                dbc.Col(
+                    dcc.Graph(
+                        id='area_chart'),
+                className="col-xs-1 text-center", align="center", width = 12)
+            ])
         ],
         width = 10, 
         style={'height': '100vh'},

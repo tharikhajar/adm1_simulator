@@ -6,6 +6,7 @@ from dash.dependencies import Input, Output, State
 
 
 from numpy.core.fromnumeric import var
+from numpy.lib.arraysetops import unique
 from app import app
 from app import server
 import plotly.graph_objects as go
@@ -157,16 +158,19 @@ def simulate_test(n_clicks, DQO, pH, mass, V_liq, V_gas, dillution_rate):
 
 # Dashboard
 #region
-@app.callback(Output('teste', 'figure'),
+
+# Time Series Chart
+@app.callback(Output('time_series', 'figure'),
     [Input('first_axis', 'value'),
     Input('second_axis', 'value')])
-def plot_test(variable_1, variable_2):
+def plot_time_series(variable_1, variable_2):
 
     while simulation.simulation_status == 0:
         time.sleep(.1)
 
     fig = make_subplots(specs=[[{'secondary_y': True}]])
     t = simulation.t
+
     for variable, axis in zip([variable_1, variable_2],[False, True]):
         variable_data = simulation.data[variable]
         y = variable_data.values
@@ -194,23 +198,118 @@ def plot_test(variable_1, variable_2):
         )
         fig.update_yaxes(title_text= f'{variable_name} ({unit_of_measure})', secondary_y=axis)
     fig.update_xaxes(title_text='Tempo (dias)')
-    return fig
 
-@app.callback([Output('first_axis', 'options'),
-    Output('second_axis', 'options')],
-    Input('botao_teste', 'n_clicks'))
-def populate_dropdown(n_clicks):
-    options = []
+    fig.update_layout(
+        height=400,
+        margin=dict(
+            l=15,
+            r=15,
+            b=15,
+            t=15,
+            pad=5
+        )
+    )
+    return fig
+# Area Chart
+
+@app.callback(Output('area_chart', 'figure'),
+    Input('area_chart_group', 'value'))
+def plot_area_chart(group):
+
     while simulation.simulation_status == 0:
         time.sleep(.1)
+
+    fig = go.Figure()
+
+    variables_to_plot = []
     for variable in simulation.data.keys():
-        options.append(
+
+        variable_group = simulation.data[variable].category
+        variable_sub_group = simulation.data[variable].subcategory
+
+        if variable_group == group:
+            variables_to_plot.append(variable)
+        elif variable_sub_group == group:
+            variables_to_plot.append(variable)
+        
+    t = simulation.t
+    t = [round(t_current, 1) for t_current in t]
+
+    for variable in variables_to_plot:
+        fig.add_trace(go.Scatter(
+            x=t, y=simulation.data[variable].values,
+            text=simulation.data[variable].name,
+            mode='lines', stackgroup='one',
+            groupnorm='percent', name=simulation.data[variable].name,
+            line=dict(
+                width=0.5
+            )))
+
+    fig.update_layout(
+        height=400,
+        showlegend=True,
+        xaxis_type='category',
+        xaxis=dict(
+          tickmode='linear',
+          tick0=0,
+          dtick=100,
+          title='Dias'
+        ),
+        yaxis=dict(
+            type='linear',
+            range=[1, 100],
+            ticksuffix='%'),
+        margin=dict(
+            l=15,
+            r=15,
+            b=15,
+            t=15,
+            pad=5
+        )
+        )
+    return fig
+
+# Dropdowns
+@app.callback([Output('first_axis', 'options'),
+    Output('second_axis', 'options'),
+    Output('area_chart_group', 'options')],
+    Input('botao_teste', 'n_clicks'))
+def populate_dropdown(n_clicks):
+
+    options_variables = []
+    options_groups_list = []
+    options_groups = []
+
+    while simulation.simulation_status == 0:
+        time.sleep(.1)
+
+    for variable in simulation.data.keys():
+        # List of variable - To be used with dropdown for line chart
+        options_variables.append(
             {
                 'label': simulation.data[variable].name,
                 'value': variable
             }
         )
-    return options, options
+
+        # List of gorups - to be used with area chart graph
+        group = simulation.data[variable].category
+        sub_group = simulation.data[variable].subcategory
+        options_groups_list.extend([group, sub_group])
+
+
+    options_groups_list = list(set(options_groups_list)) # Get rid of duplicates
+    options_groups_list = list(filter(None.__ne__, options_groups_list)) # Removing None
+
+    for group in options_groups_list:
+        options_groups.append(
+            {
+                'label': group,
+                'value': group
+            }
+        )
+
+    return options_variables, options_variables, options_groups
 
     
 @app.callback(Output('dummy_botao_input', 'children'),
