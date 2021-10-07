@@ -222,24 +222,29 @@ def plot_area_chart(group):
     fig = go.Figure()
 
     variables_to_plot = []
+    colors_to_plot = []
     for variable in simulation.data.keys():
 
         variable_group = simulation.data[variable].category
         variable_sub_group = simulation.data[variable].subcategory
+        variable_color = simulation.data[variable].color
 
         if variable_group == group:
             variables_to_plot.append(variable)
+            colors_to_plot.append(variable_color)
         elif variable_sub_group == group:
             variables_to_plot.append(variable)
+            colors_to_plot.append(variable_color)
         
     t = simulation.t
     t = [round(t_current, 1) for t_current in t]
 
-    for variable in variables_to_plot:
+    for variable, color in zip(variables_to_plot, colors_to_plot):
         fig.add_trace(go.Scatter(
             x=t, y=simulation.data[variable].values,
             text=simulation.data[variable].name,
             mode='lines', stackgroup='one',
+            line_color=color,
             groupnorm='percent', name=simulation.data[variable].name,
             line=dict(
                 width=0.5
@@ -264,7 +269,7 @@ def plot_area_chart(group):
             r=15,
             b=15,
             t=15,
-            pad=5
+            pad=0
         )
         )
     return fig
@@ -300,6 +305,16 @@ def populate_dropdown(n_clicks):
 
     options_groups_list = list(set(options_groups_list)) # Get rid of duplicates
     options_groups_list = list(filter(None.__ne__, options_groups_list)) # Removing None
+
+    groups_to_remove = [
+        'Ácidos Protonados',
+        'Ionização Ácida',
+        'Ácidos Desprotonados',
+        'Inertes'
+    ]
+    for group in groups_to_remove:
+        options_groups_list.remove(group)
+
 
     for group in options_groups_list:
         options_groups.append(

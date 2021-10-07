@@ -14,11 +14,14 @@ gas = 'Fase Gasosa'
 
 diss_gas = 'Gases Dissolvidos'
 acid_org = 'Ácidos Orgânicos'
+de_prot = 'Ácidos Desprotonados'
+prot = 'Ácidos Protonados'
 inert = 'Inertes'
 micro = 'Microrganismos'
+ac_frac = 'Ionização Ácida'
 
 class Variable():
-    def __init__(self, name, unit, vanilla, ionic,
+    def __init__(self, name, unit, vanilla, ionic=False,
     color='#264653', category=None, subcategory=None, values=None):
 
         self.name = name
@@ -121,8 +124,8 @@ variables_data = dict(
         color = '#277da1',
         vanilla = True,
         ionic = False,
-        category = sol_org,
-        subcategory = diss_gas
+        category = None,
+        subcategory = None
     ),
     S_ch4 = Variable(
         name = 'Metano Dissolvido',
@@ -130,8 +133,8 @@ variables_data = dict(
         color = '#606c38',
         vanilla = True,
         ionic = False,
-        category = sol_org,
-        subcategory = diss_gas
+        category = None,
+        subcategory = None
     ),
     S_I = Variable(
         name = 'Inertes Solúveis',
@@ -152,7 +155,7 @@ variables_data = dict(
         subcategory = None
     ),
     X_ch = Variable(
-        name = 'Carboidratos',
+        name = 'Polissacarídeos',
         unit = kg_COD,
         color = '#d62828',
         vanilla = True,
@@ -184,7 +187,7 @@ variables_data = dict(
         color = '#177e89',
         vanilla = True,
         ionic = False,
-        category = part_org,
+        category = None,
         subcategory = micro
     ),
     X_aa = Variable(
@@ -193,7 +196,7 @@ variables_data = dict(
         color = '#084c61',
         vanilla = True,
         ionic = False,
-        category = part_org,
+        category = None,
         subcategory = micro
     ),
     X_fa = Variable(
@@ -202,7 +205,7 @@ variables_data = dict(
         color = '#db3a34',
         vanilla = True,
         ionic = False,
-        category = part_org,
+        category = None,
         subcategory = micro
     ),  
     X_c4 = Variable(
@@ -211,7 +214,7 @@ variables_data = dict(
         color = '#ffc857',
         vanilla = True,
         ionic = False,
-        category = part_org,
+        category = None,
         subcategory = micro
     ),  
     X_pro = Variable(
@@ -220,7 +223,7 @@ variables_data = dict(
         color = '#323031',
         vanilla = True,
         ionic = False,
-        category = part_org,
+        category = None,
         subcategory = micro
     ),
     X_ac = Variable(
@@ -229,7 +232,7 @@ variables_data = dict(
         color = '#9a031e',
         vanilla = True,
         ionic = False,
-        category = part_org,
+        category = None,
         subcategory = micro
     ),
     X_h2 = Variable(
@@ -238,7 +241,7 @@ variables_data = dict(
         color = '#5f0f40',
         vanilla = True,
         ionic = False,
-        category = part_org,
+        category = None,
         subcategory = micro
     ),
     X_I = Variable(
@@ -247,44 +250,44 @@ variables_data = dict(
         color = '#495057',
         vanilla = True,
         ionic = False,
-        category = part_org,
+        category = None,
         subcategory = inert
     ),
     S_hva = Variable(
-        name = 'Valérico Ionizado',
+        name = 'Valerato',
         unit = kg_COD,
         color = '#006400',
         vanilla = True,
         ionic = True,
-        category = sol_org,
-        subcategory = acid_org
+        category = ac_frac,
+        subcategory = de_prot
     ),
     S_hbu = Variable(
-        name = 'Butírico Ionizado',
+        name = 'Butirato',
         unit = kg_COD,
         color = '#38b000',
         vanilla = True,
         ionic = True,
-        category = sol_org,
-        subcategory = acid_org
+        category = ac_frac,
+        subcategory = de_prot
     ),
     S_hpro = Variable(
-        name = 'Propiônico Ionizado',
+        name = 'Propianato',
         unit = kg_COD,
         color = '#70e000',
         vanilla = True,
         ionic = True,
-        category = sol_org,
-        subcategory = acid_org
+        category = ac_frac,
+        subcategory = de_prot
     ),
     S_hac = Variable(
-        name = 'Acético Ionizado',
+        name = 'Acetato',
         unit = kg_COD,
         color = '#ccff33',
         vanilla = True,
         ionic = True,
-        category = sol_org,
-        subcategory = acid_org
+        category = ac_frac,
+        subcategory = de_prot
     ),
     S_IC = Variable(
         name = 'Carbono Inorgânico',
@@ -305,7 +308,7 @@ variables_data = dict(
         subcategory = None
     ),
     S_cat = Variable(
-        name = 'Cátions',
+        name = 'Cátions Não Especificados',
         unit = kmol,
         color = '#006466',
         vanilla = True,
@@ -314,7 +317,7 @@ variables_data = dict(
         subcategory = None
     ),
     S_an = Variable(
-        name = 'Ânions',
+        name = 'Ânions Não Especificados',
         unit = kmol,
         color = '#4d194d',
         vanilla = True,
@@ -328,8 +331,8 @@ variables_data = dict(
         color = '#ff6b6b',
         vanilla = True,
         ionic = True,
-        category = sol_inor,
-        subcategory = None
+        category = ac_frac,
+        subcategory = prot
     ),
     S_nh3 = Variable(
         name = 'Amônia',
@@ -337,8 +340,8 @@ variables_data = dict(
         color = '#4ecdc4',
         vanilla = True,
         ionic = True,
-        category = sol_inor,
-        subcategory = None
+        category = ac_frac,
+        subcategory = prot
     ),
     S_H_ion = Variable(
         name = 'Prótons',

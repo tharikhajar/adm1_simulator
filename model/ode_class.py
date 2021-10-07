@@ -1,5 +1,6 @@
 # File dedicated for the implementation of the ODE model
 #%%
+from os import name
 from dash_html_components.Var import Var
 import numpy as np
 from importlib import reload
@@ -143,7 +144,7 @@ class Simulation:
         Patm = self.phys_par[16]
         h2o = self.phys_par[17]
         kp = self.phys_par[18]
-
+        h2o_list = []
         q_values = []
 
         for ch4, co2, h2 in zip(p_ch4, p_co2, p_h2):
@@ -164,6 +165,19 @@ class Simulation:
         )
 
         self.data['q_gas'] = q_gas_data
+
+        h2o_array = np.full((len(p_ch4)), h2o)
+
+        h2o_data = Variable(
+            name='H2O Gas',
+            unit='bar',
+            vanilla=False,
+            color='#023e8a',
+            values=h2o_array,
+            category='Fase Gasosa'
+        )
+
+        self.data['h2o'] = h2o_data
 
     def calculate_financial_value(self, energy_price=0.41, generator_efficiency=0.32):
         # Calculates the energy generated (kWh) and the savings (BRL) by month
