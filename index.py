@@ -2,7 +2,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-
+from scipy import stats
 
 
 from numpy.core.fromnumeric import var
@@ -13,13 +13,14 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import time
 
-from apps import input_parameters, dashboard
+from apps import input_parameters, dashboard, correlation
 import pathlib
 import model.ode_class
 
 from importlib import reload
 reload(input_parameters)
 reload(dashboard)
+reload(correlation)
 reload(model.ode_class)
 
 from model.ode_class import Simulation
@@ -40,7 +41,8 @@ app.layout = index_layout
 app.validation_layout = html.Div([
     index_layout,
     input_parameters.layout,
-    dashboard.layout
+    dashboard.layout,
+    correlation.layout
 ])
 
 # Pages url callback
@@ -54,6 +56,8 @@ def display_page(pathname):
         return dashboard.layout
     elif pathname == '/':
         return input_parameters.layout
+    elif pathname == '/results/correlation':
+        return correlation.layout
     else:
         return input_parameters.layout
 #endregion
@@ -345,6 +349,76 @@ def financial_calculation(generator_efficiency, energy_price):
     return f'{monthly_energy} kWh gerados por mês, resultando em uma economia de R$ {monthly_savings} ao mês.'
 #endregion
 
+#Correlation page callbacks
+@app.callback(Output('correlation_target', 'options'),
+    Input('dummy_corr', 'n_clicks'))
+def goto_correlation_page(n_clicks):
+
+    while simulation.simulation_status == 0:
+        time.sleep(.1)
+
+    simulation.diff()
+    options_variables = []
+
+    for variable in simulation.data.keys():
+        # List of variable - To be used with dropdown for line chart
+        if simulation.data[variable].vanilla:
+            options_variables.append(
+                {
+                    'label': simulation.data[variable].name,
+                    'value': variable
+                }
+            )
+
+    return options_variables
+    
+@app.callback(Output('correlation_heatmap', 'figure'),
+    Input('correlation_target', 'value'))
+def plot_heatmap(variable):
+
+    while simulation.simulation_status == 0:
+        time.sleep(.1)
+
+    simulation.diff()
+
+    names = []
+    corr_vals = []
+    target_diff = simulation.data[variable].derivative
+    for var in simulation.data:
+        if var != variable and simulation.data[var].vanilla:
+            name = simulation.data[var].name
+            var_diff = simulation.data[var].derivative
+            corr_index = stats.pearsonr(target_diff, var_diff)
+            names.append(name)
+            corr_vals.append(corr_index[0])
+    sorted_names = [name for val, name in sorted(zip(corr_vals, names))]
+    print('corrvlas')
+
+    print(sorted_names)
+    corr_vals = sorted(corr_vals)
+    corr_vals = [[val] for val in corr_vals]
+    print(corr_vals)
+    data = go.Heatmap(
+        z=corr_vals,
+        x=[0],
+        y=sorted_names
+    )
+    layout = go.Layout(
+        height=900,
+        width=500
+        )
+    fig = go.Figure(data=data, layout=layout)
+
+    return fig
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+#%%
+import numpy as np
+t = np.array([1,1,1,1])
+x = np.array([1,2,3,10])
+dx = np.diff(x)
+print(dx)
+# %%

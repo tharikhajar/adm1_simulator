@@ -88,6 +88,13 @@ layout = dbc.Container([
 
                     html.Br(),
                     html.Br(),
+                    dcc.Link(dbc.Button(
+                        'Correlação', 
+                        id='botao_correlation',
+                        n_clicks = 0,
+                        style={'background-color': color_p['4purple']}),
+                        href='/results/correlation'
+                    ),
                     html.Br(),
                     html.Br(),
 

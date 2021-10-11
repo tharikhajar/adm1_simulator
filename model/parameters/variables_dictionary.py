@@ -22,7 +22,8 @@ ac_frac = 'Ionização Ácida'
 
 class Variable():
     def __init__(self, name, unit, vanilla, ionic=False,
-    color='#264653', category=None, subcategory=None, values=None):
+    color='#264653', category=None, subcategory=None, values=None,
+    derivative=None):
 
         self.name = name
         self.unit = unit
@@ -32,6 +33,7 @@ class Variable():
         self.category = category
         self.subcategory = subcategory
         self.values = values
+        self.derivative = derivative
 
     def find_steady_state(self):
     # Takes in a list of results values for a state and finds when it 

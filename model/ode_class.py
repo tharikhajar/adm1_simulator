@@ -206,6 +206,19 @@ class Simulation:
         # Used to determine when the charts can be ploted
         self.simulation_status = status
 
+    def diff(self):
+    # Calculate the derivative of all the vanilla values
+
+        t_diff = np.diff(self.t)
+        for variable_key in self.data.keys():
+            variable = self.data[variable_key]
+            if variable.vanilla == True:
+                values = variable.values
+                self.data[variable_key].derivative = np.diff(values) / t_diff
+        
+
+
+
 
 
 
