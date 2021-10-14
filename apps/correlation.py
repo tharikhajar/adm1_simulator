@@ -21,12 +21,16 @@ layout = dbc.Container([
                 options=[],
                 value='S_gas_ch4',
                 searchable=True,
-                style=dict(width='40%'),
+                style=dict(width='90%'),
             ),
             dcc.Graph(
                 id='correlation_heatmap'
             )
         ], width=4),
+        dbc.Col([
+            dcc.Graph(id='correlation_time_series'),
+            dcc.Graph(id='correlation_scatter')
+        ], width=8),
         
 
         dbc.Button(

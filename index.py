@@ -205,6 +205,7 @@ def plot_time_series(variable_1, variable_2):
 
     fig.update_layout(
         height=400,
+        hovermode='x unified',
         margin=dict(
             l=15,
             r=15,
@@ -257,6 +258,7 @@ def plot_area_chart(group):
     fig.update_layout(
         height=400,
         showlegend=True,
+        hovermode='x unified',
         xaxis_type='category',
         xaxis=dict(
           tickmode='linear',
@@ -379,46 +381,123 @@ def plot_heatmap(variable):
     while simulation.simulation_status == 0:
         time.sleep(.1)
 
+    # Calculating the derivative for all the vanilla variables
     simulation.diff()
 
     names = []
     corr_vals = []
+    # This is the variable that the correlation will be calculated against
     target_diff = simulation.data[variable].derivative
+
     for var in simulation.data:
+
         if var != variable and simulation.data[var].vanilla:
             name = simulation.data[var].name
             var_diff = simulation.data[var].derivative
             corr_index = stats.pearsonr(target_diff, var_diff)
             names.append(name)
             corr_vals.append(corr_index[0])
-    sorted_names = [name for val, name in sorted(zip(corr_vals, names))]
-    print('corrvlas')
 
-    print(sorted_names)
+    sorted_names = [name for val, name in sorted(zip(corr_vals, names))]
+
     corr_vals = sorted(corr_vals)
+    # Need to add all the z values inside a list for the plot to work
     corr_vals = [[val] for val in corr_vals]
-    print(corr_vals)
+
     data = go.Heatmap(
         z=corr_vals,
         x=[0],
-        y=sorted_names
+        y=sorted_names,
+        ygap=1,
+        colorscale=[
+            [0, color_p['4green']],
+            [.5, color_p['grey2']],
+            [1, color_p['4purple']]
+        ],
+        hovertemplate='Variável: %{y}<br> Índice de Correlação de Pearson: %{z}' +
+                    '<extra></extra>'
     )
     layout = go.Layout(
         height=900,
-        width=500
+        width=500,
+        xaxis=dict(visible=False)
         )
+
     fig = go.Figure(data=data, layout=layout)
 
     return fig
 
+@app.callback([Output('correlation_time_series', 'figure'),
+    Output('correlation_scatter', 'figure')],
+    [Input('correlation_heatmap', 'clickData'),
+    Input('correlation_target', 'value')])
+def test_clickData(clickData, variable_1):
+
+    if clickData is None:
+        data = go.Scatter(x=[0],y=[0])
+        layout=go.Layout(title='Clique em alguma variável no gráfico ao lado')
+        fig = go.Figure(data=data,layout=layout)
+        return fig, fig
+    else:
+        variable_2_name = clickData['points'][0]['y']
+        for variable in simulation.data.keys():
+            var_name = simulation.data[variable].name
+            if var_name == variable_2_name:
+                variable_2 = variable
+                break
+
+    # We will end the chart when steady is achieved to improve visibility of relevant events
+    t = simulation.t        
+    steady_state_index_1 = simulation.data[variable_1].find_steady_state()
+
+    steady_state_index_2 = simulation.data[variable_2].find_steady_state()
+    steady_vals = list(filter(None.__ne__, [steady_state_index_1, steady_state_index_2]))
+    steady_time_index = max(steady_vals)
+    
+    fig = make_subplots(specs=[[{'secondary_y': True}]])
+    
+    t_plot = t[1:steady_time_index]
+
+    for variable, axis in zip([variable_1, variable_2],[False, True]):
+        variable_data = simulation.data[variable]
+        y = variable_data.values
+        variable_name = variable_data.name
+        unit_of_measure = variable_data.unit
+        color = variable_data.color
+
+        derivative = variable_data.derivative
+
+        fig.add_trace(
+            go.Scatter(
+                x=t_plot, y=derivative, 
+                name= 'Derivada para: ' + variable_name, marker = dict(color=color),
+                mode='lines', line = dict(dash='dash')
+                ),
+            secondary_y=axis
+        )
+        fig.update_yaxes(title_text= f'{variable_name} ({unit_of_measure} / dias)', secondary_y=axis)
+    fig.update_xaxes(title_text='Tempo (dias)')
+
+    fig.update_layout(
+        height=400,
+        hovermode='x unified',
+        margin=dict(
+            l=15,
+            r=15,
+            b=15,
+            t=15,
+            pad=5
+        )
+    )
+
+    fig_scatter = go.Figure(data=go.Scatter(
+        x=simulation.data[variable_1].derivative,
+        y=simulation.data[variable_2].derivative,
+        mode='markers'
+    ))
+
+    return fig, fig_scatter
 
 if __name__ == '__main__':
     app.run_server(debug=True)
 
-#%%
-import numpy as np
-t = np.array([1,1,1,1])
-x = np.array([1,2,3,10])
-dx = np.diff(x)
-print(dx)
-# %%

@@ -48,7 +48,7 @@ layout = dbc.Container([
                     html.Br(),
     
                     html.H6(
-                        "Preço da energia (R$)",
+                        "Preço da energia (R$/kWh)",
                         style = {"textAlign": "center"}
                     ),
                     dcc.Input(
