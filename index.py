@@ -498,6 +498,19 @@ def test_clickData(clickData, variable_1):
 
     return fig, fig_scatter
 
+# Callback do collapse
+@app.callback(
+    Output("collapse_advanced_options", "is_open"),
+    [Input("advanced_options_button", "n_clicks")],
+    [State("collapse_advanced_options", "is_open")],
+)
+
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+######
+
 if __name__ == '__main__':
     app.run_server(debug=True)
 

@@ -70,8 +70,10 @@ layout = dbc.Container([
                 html.Br(),
 
                 #Financial overview text
-                html.Div(id = 'monthly_savings_div', 
-                style = {"color": "black", "textAlign": "center"}),
+                dbc.CardHeader(
+                    html.Div(id = 'monthly_savings_div', 
+                    style = {"color": "black", "textAlign": "center"}),
+                ),
                 #Buttons
                 dbc.Col([
 
