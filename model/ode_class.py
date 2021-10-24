@@ -79,6 +79,8 @@ class Simulation:
         self.feed_composition = self.feed_composition_ratios * (self.DQO * (self.mass / self.dillution_rate))
 
         initial_condition = self.initial_condition_ratio * (self.DQO * (self.mass / self.dillution_rate))
+        #initial_condition[:22] = self.feed_composition[:22]
+
         self.initial_condition = np.concatenate((initial_condition, [np.power(10., -1 * self.pH)], self.gas_initial_state))
 
         self.Q_in = self.dillution_rate
@@ -146,30 +148,47 @@ class Simulation:
         kp = self.phys_par[18]
         h2o_list = []
         q_values = []
+        q_metane_vals = []
 
         for ch4, co2, h2 in zip(p_ch4, p_co2, p_h2):
             pressure = ch4 + co2 + h2 + h2o
             q_gas = kp * (pressure - Patm)
+            q_metane = (ch4 / (ch4 + co2 + h2 + h2o)) * q_gas
             # if q_gas < 0: q_gas = 0.
             q_values.append(q_gas)
+            q_metane_vals.append(q_metane)
 
         q_gas_array = np.array(q_values)
+        q_metane_array = np.array(q_metane_vals)
+        q_gas_array = q_gas_array.clip(min=0)
+        q_metane_array = q_metane_array.clip(min=0)
 
         q_gas_data = Variable(
-            name='Vazão de Gás',
+            name='Vazão de Biogás',
             unit='m3 / dia',
             vanilla = False,
             ionic = False,
-            color='#14213d',
+            color='#414833',
             values = q_gas_array
         )
 
         self.data['q_gas'] = q_gas_data
 
+        q_metane_gas_data = Variable(
+            name='Vazão de Metano',
+            unit='m3 / dia',
+            vanilla = False,
+            ionic = False,
+            color='#a4ac86',
+            values = q_metane_array
+        )
+
+        self.data['q_metane'] = q_metane_gas_data
+
         h2o_array = np.full((len(p_ch4)), h2o)
 
         h2o_data = Variable(
-            name='H2O Gas',
+            name='Água Gasosa',
             unit='bar',
             vanilla=False,
             color='#023e8a',
@@ -216,6 +235,7 @@ class Simulation:
                 values = variable.values
                 self.data[variable_key].derivative = np.diff(values) / t_diff
         
+
 
 
 

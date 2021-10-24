@@ -27,7 +27,7 @@ DQO = 125 # kg/DQO parameters
 pH = 7 
 massa_dia = 3 #kg/m³
 V_digestor = 80 # m³
-V_digestor_gas = V_digestor * 0.3 # m³
+
 
 # Layout
 
@@ -125,7 +125,7 @@ layout = dbc.Container([
                         dcc.Input(            
                             id = 'Volume_Headspace',
                             type = 'number',
-                            value = V_digestor_gas,
+                            value = 30,
                             debounce = True,
                             min = 0 , max = 10**6, step = 1,
                             required= True,
@@ -149,9 +149,9 @@ layout = dbc.Container([
                         # VOLUME SELECTION - SOCORRO - Alteração no nome da variável estragou o callback no index.py do gráfico
                         dcc.Dropdown(
                             id = 'selecao_volume',
-                            options = [{'label': 'Total', 'value': 'socorro'}, 
-                                        {'label': 'Líquido', 'value': 'socorro'}],
-                            value = 'V_total',
+                            options = [{'label': 'Total', 'value': 'total'}, 
+                                        {'label': 'Líquido', 'value': 'liq'}],
+                            value = 'total',
                             searchable = True,
                             style = dict(width='100%')
                         ),
@@ -237,14 +237,14 @@ layout = dbc.Container([
                         ),
 
                         #Advanced options: Headspace input
-                        html.H6("Volume do Headspace (m³)"),
+                        html.H6("Parcela Gasosa (%)"),
 
                         dcc.Input(            
-                            id = 'Volume_Headspace',
+                            id = 'parcela_gas',
                             type = 'number',
-                            value = V_digestor_gas,
+                            value = 30,
                             debounce = True,
-                            min = 0 , max = 10**6, step = 1,
+                            min = 1 , max = 50, step = 1,
                             required= True,
                             size = "100",
                             persistence = True, persistence_type = 'session', 
@@ -268,12 +268,33 @@ layout = dbc.Container([
                             'placement': 'bottom'},
                         ),
                     ],width=12),
+                    dbc.Col(
+                        dcc.Slider( 
+                            id = 'slider_DQO',
+                            min = 0.1,
+                            max = 1,
+                            step = 0.01,
+                            value = 0.7,
+                            persistence = True, persistence_type = 'session',
+                            tooltip={
+                                'always_visible': True,
+                                'placement': 'bottom'
+                            }
+                    ),width=12, )
                 ],
                 id = "collapse_advanced_options",
                 is_open = False,
                 ),
                 ], 
                 className="col-xs-1 text-center", width = 12),
+                dbc.Col(
+                    html.H4(
+                        id='slider_output_container',
+                        children=[]
+                    )
+                ,
+                width=12,
+                className='text-center'),
                 dbc.Col(
                     dcc.Link(dbc.Button(
                         'Simular',

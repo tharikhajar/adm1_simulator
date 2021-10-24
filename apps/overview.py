@@ -83,7 +83,7 @@ layout = dbc.Container([
 
                     dbc.Button(
                         'Atualizar', 
-                        id='botao_teste_2',
+                        id='botao_teste',
                         n_clicks = 0,
                         style={'background-color': color_p['4green']},
                     ),
@@ -125,46 +125,21 @@ layout = dbc.Container([
                 ],
                 className="col-xs-1 text-center", align="center", width = 12
                 ),
-                #Dropdowns
-                dbc.Col([
-                    dcc.Dropdown(
-                    id='first_axis',
-                    options=[],
-                    value='S_gas_ch4',
-                    searchable=True,
-                    style=dict(width='90%'),
-                    ),
-                    dcc.Dropdown(
-                    id='second_axis',
-                    options=[],
-                    value='q_gas',
-                    searchable=True,
-                    style=dict(width='90%'),
-                    
-                    ),
-                ], style=dict(display='flex'),
-                className="col-xs-1 text-center", align="start", width = 12),
                 #Graph
                 dbc.Col(
                     dcc.Graph( 
-                    id='time_series'),
+                    id='time_series_gas'),
                 className="col-xs-1 text-center", align="center", width = 12),
             ]),
             dbc.Row([
-                dbc.Col([
-                    dcc.Dropdown(
-                    id='area_chart_group',
-                    options=[],
-                    value='Fase Gasosa',
-                    searchable=True,
-                    style=dict(width='90%'),
-                    )
-                ], style=dict(display='flex'),
-                className="col-xs-1 text-center", align="start", width = 12),
 
                 dbc.Col(
                     dcc.Graph(
-                        id='area_chart'),
+                        id='gas_comp_chart'),
+                className="col-xs-1 text-center", align="center", width = 12),
+                dbc.Col(
+                    dcc.Graph(
+                        id='dqo_bar'),
                 className="col-xs-1 text-center", align="center", width = 12)
             ])
         ],

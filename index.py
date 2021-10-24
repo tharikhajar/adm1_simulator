@@ -13,7 +13,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import time
 
-from apps import input_parameters, dashboard, correlation
+from apps import input_parameters, dashboard, correlation, overview
 import pathlib
 import model.ode_class
 
@@ -21,6 +21,7 @@ from importlib import reload
 reload(input_parameters)
 reload(dashboard)
 reload(correlation)
+reload(overview)
 reload(model.ode_class)
 
 from model.ode_class import Simulation
@@ -53,7 +54,7 @@ def display_page(pathname):
     '''Displays page according to url adress, which is changed by the dcc.Link for each 'dashboard.py' and 'input_parametres.py'
     '''
     if pathname == '/results':
-        return dashboard.layout
+        return overview.layout
     elif pathname == '/':
         return input_parameters.layout
     elif pathname == '/results/correlation':
@@ -74,8 +75,16 @@ def display_page(pathname):
     Output('slider_diluição', 'step')],
     [Input('slider_diluição', 'value'),
     Input('massa_dia', 'value'),
-    Input('Volume_Liquido', 'value')])
-def update_output(dillution_rate, mass, V_liq):
+    Input('Volume_Input', 'value'),
+    Input('selecao_volume', 'value'),
+    Input('parcela_gas', 'value')])
+def update_output(dillution_rate, mass, V, V_type, parc_gas):
+
+    parc_gas = parc_gas / 100
+    if V_type == 'total':
+        V_liq = V * (1 - parc_gas)
+    else:
+        V_liq = V
 
     concentration = mass / dillution_rate
     HRT = round(V_liq / dillution_rate, 1)
@@ -96,10 +105,20 @@ def update_output(dillution_rate, mass, V_liq):
 #endregion
 
 # Volume
-@app.callback(Output('bar_volume_biodigestor', 'figure'),
-            [Input('Volume_Liquido', 'value'),
-            Input('Volume_Headspace', 'value')])
-def plot_biodigestor_volume(V_liq, V_gas):
+@app.callback([Output('bar_volume_biodigestor', 'figure'),
+            Output('Volume_Headspace', 'value')],
+            [Input('Volume_Input', 'value'),
+            Input('selecao_volume', 'value'),
+            Input('parcela_gas', 'value')])
+def plot_biodigestor_volume(V, V_type, parc_gas):
+
+    parc_gas = parc_gas / 100
+    if V_type == 'total':
+        V_liq = round(V * (1 - parc_gas), 1)
+        V_gas = round(V * parc_gas, 1)
+    else:
+        V_liq = round(V, 1)
+        V_gas = round((V / (1 - parc_gas)) * parc_gas, 1)
 
     data = [
         go.Bar(name='Volume de Líquido', x=[1], y=[V_liq],
@@ -133,7 +152,7 @@ def plot_biodigestor_volume(V_liq, V_gas):
         )
 
 
-    return figbar
+    return figbar, V_gas
 
 
 
@@ -146,10 +165,21 @@ def plot_biodigestor_volume(V_liq, V_gas):
     [State('slider_DQO', 'value'),
     State('pH', 'value'),
     State('massa_dia', 'value'),
-    State('Volume_Liquido', 'value'),
-    State('Volume_Headspace', 'value'),
-    State('slider_diluição', 'value')])
-def simulate_test(n_clicks, DQO, pH, mass, V_liq, V_gas, dillution_rate):
+    State('Volume_Input', 'value'),
+    State('parcela_gas', 'value'),
+    State('slider_diluição', 'value'),
+    State('selecao_volume', 'value')])
+def simulate_test(n_clicks, DQO, pH, mass, V, parc_gas, dillution_rate, V_type):
+
+    parc_gas = parc_gas / 100
+    if V_type == 'total':
+        V_liq = V * (1 - parc_gas)
+        V_gas = V * parc_gas
+    else:
+        V_liq = V
+        V_gas = (V / (1 - parc_gas)) * parc_gas
+
+
     simulation.set_simulation_status(status=0)
     simulation.update_parameters(DQO, pH, dillution_rate, V_liq, V_gas, mass)
     simulation.calculate_parameters()
@@ -160,8 +190,154 @@ def simulate_test(n_clicks, DQO, pH, mass, V_liq, V_gas, dillution_rate):
     return ''
 #endregion
 
-# Dashboard
-#region
+# Overview
+# Flow Rate chart
+@app.callback(Output('time_series_gas', 'figure'),
+    Input('botao_teste', 'n_clicks'))
+def plot_time_series(n_clicks):
+
+    while simulation.simulation_status == 0:
+        time.sleep(.1)
+
+    fig = make_subplots(specs=[[{'secondary_y': True}]])
+    t = simulation.t
+
+    for variable in ['q_gas', 'q_metane']:
+        variable_data = simulation.data[variable]
+        y = variable_data.values
+        variable_name = variable_data.name
+        unit_of_measure = variable_data.unit
+        color = variable_data.color
+        steady_state_index = variable_data.find_steady_state()
+        steady_time = t[steady_state_index]
+
+        fig.add_trace(
+            go.Scatter(
+                x=t[200:], y=y[200:],
+                name=variable_name, marker = dict(color=color),
+                mode='lines'
+                )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=[steady_time, steady_time], y=[min(y[200:]), max(y[200:])], 
+                name= 'Estado Estacionário para: ' + variable_name, marker = dict(color=color),
+                mode='lines', line = dict(dash='dash')
+                )
+        )
+        fig.update_yaxes(title_text= f'Vazão ({unit_of_measure})')
+    fig.update_xaxes(title_text='Tempo (dias)')
+
+    fig.update_layout(
+        height=400,
+        hovermode='x unified',
+        margin=dict(
+            l=15,
+            r=15,
+            b=15,
+            t=15,
+            pad=5
+        )
+    )
+    return fig
+
+@app.callback(Output('gas_comp_chart', 'figure'),
+    Input('botao_teste', 'n_clicks'))
+def gas_comp(n_clicks):
+
+    while simulation.simulation_status == 0:
+        time.sleep(.1)
+
+    variables = ['S_gas_ch4', 'S_gas_co2', 'S_gas_h2', 'h2o']
+    names = []
+    vals = []
+    colors = []
+    for variable in variables:
+        var_data = simulation.data[variable]
+        name = var_data.name
+        val = var_data.values[-1]
+        color = var_data.color
+        names.append(name)
+        vals.append(val)
+        colors.append(color)
+
+    data = [go.Bar(name=name, x=[val * 100], y=[0], marker_color=color,
+            orientation='h', text=[f'{round(val * 100, 1)}%']) 
+            for name, val, color in zip(names, vals, colors)]
+
+    fig = go.Figure(data=data)
+    fig.update_layout(
+        title='Compositação do Biogás (%)',
+        barmode='stack',
+        xaxis=dict(visible=False),
+        yaxis=dict(visible=False),
+        legend=dict(
+            orientation='h',
+            yanchor='top',
+            y=-0.5,
+            xanchor='left',
+            x=0
+        ),
+        paper_bgcolor=color_p['grey1'],
+        plot_bgcolor='rgba(0,0,0,0)',
+        margin=dict(
+            l=15,
+            r=15,
+            b=15,
+            t=40,
+            pad=5
+        ),
+        height=200
+        )
+    return fig
+
+@app.callback(Output('dqo_bar', 'figure'),
+    Input('botao_teste', 'n_clicks'))
+def gas_comp(n_clicks):
+    while simulation.simulation_status == 0:
+        time.sleep(.1)
+
+    feed_composition = simulation.feed_composition
+    feed_dqo = sum(feed_composition[:22])
+
+    data = simulation.data
+    final_dqo = 0
+    for variable in data.keys():
+        vanilla = data[variable].vanilla
+        uom = data[variable].unit
+        sub_cat = data[variable].subcategory
+        if vanilla and uom == 'kg COD / m-3' and sub_cat != 'Ácidos Desprotonados':
+            val = data[variable].values[-1]
+            final_dqo += val
+
+    labels = ['DQO na Saída', 'DQO na Alimentação']
+    vals = [final_dqo, feed_dqo]
+    text = [f'{label}: {round(val,2)} kg DQO/m-3' for label, val in zip(labels, vals)]
+    colors = ['#656d4a', '#414833']
+    fig = go.Figure(go.Bar(
+        x=vals, y=labels,
+        orientation='h', text=text,
+        marker_color=colors
+        ))
+    fig.update_layout(
+        title='Concentração de DQO',
+        xaxis=dict(visible=False),
+        yaxis=dict(visible=False),
+        paper_bgcolor=color_p['grey1'],
+        plot_bgcolor='rgba(0,0,0,0)',
+        margin=dict(
+            l=15,
+            r=15,
+            b=15,
+            t=40,
+            pad=5
+        ),
+        height=200
+    )
+
+    return fig
+    
+
 
 # Time Series Chart
 @app.callback(Output('time_series', 'figure'),
@@ -284,7 +460,7 @@ def plot_area_chart(group):
 @app.callback([Output('first_axis', 'options'),
     Output('second_axis', 'options'),
     Output('area_chart_group', 'options')],
-    Input('botao_teste', 'n_clicks'))
+    Input('botao_teste_2', 'n_clicks'))
 def populate_dropdown(n_clicks):
 
     options_variables = []
