@@ -201,7 +201,13 @@ def plot_time_series(n_clicks):
 
     fig = make_subplots(specs=[[{'secondary_y': True}]])
     t = simulation.t
-
+    t_init_index = 0
+    t_init = 0
+    while t_init < 1:
+        t_init_index += 1
+        t_init = t[t_init_index]
+        
+    
     for variable in ['q_gas', 'q_metane']:
         variable_data = simulation.data[variable]
         y = variable_data.values
@@ -213,14 +219,14 @@ def plot_time_series(n_clicks):
 
         fig.add_trace(
             go.Scatter(
-                x=t[200:], y=y[200:],
+                x=t[t_init_index:], y=y[t_init_index:],
                 name=variable_name, marker = dict(color=color),
                 mode='lines'
                 )
         )
         fig.add_trace(
             go.Scatter(
-                x=[steady_time, steady_time], y=[min(y[200:]), max(y[200:])], 
+                x=[steady_time, steady_time], y=[min(y[t_init_index:]), max(y[t_init_index:])], 
                 name= 'Estado Estacionário para: ' + variable_name, marker = dict(color=color),
                 mode='lines', line = dict(dash='dash')
                 )
