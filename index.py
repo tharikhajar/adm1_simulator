@@ -2,6 +2,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+from dash_html_components.Strong import Strong
 from scipy import stats
 
 
@@ -59,6 +60,8 @@ def display_page(pathname):
         return input_parameters.layout
     elif pathname == '/results/correlation':
         return correlation.layout
+    elif pathname == '/results/dashboard' :
+        return dashboard.layout
     else:
         return input_parameters.layout
 #endregion

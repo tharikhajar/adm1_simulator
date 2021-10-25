@@ -90,7 +90,7 @@ layout = dbc.Container([
                 dbc.Col([
                     html.H6(
                         'Massa de Substrato Produzido por Dia (kg massa úmida/dia)',
-                        style={"textAlign": "center", 'marginBottom': 4, 'marginTop': 4}
+                        style={"textAlign": "center"}
                         ),
                     dcc.Input(            
                         id = 'massa_dia',
@@ -105,12 +105,12 @@ layout = dbc.Container([
                     ),
                 ], 
                 className="col-xs-1 text-center", 
-                align="center",
+                align="middle",
                 width={"size": 4},
+                style = {"padding": "10px"}
                 ),
                 
                 # Volume input col
-                # CHECK VOLUME ##################################################################################################
                 dbc.Col([
 
                     dbc.Col([ #volumes info/input col
@@ -146,7 +146,7 @@ layout = dbc.Container([
                         html.H6(
                             "Volume (m³)",
                         ),
-                        # VOLUME SELECTION - SOCORRO - Alteração no nome da variável estragou o callback no index.py do gráfico
+                        # VOLUME SELECTION
                         dcc.Dropdown(
                             id = 'selecao_volume',
                             options = [{'label': 'Total', 'value': 'total'}, 
@@ -170,25 +170,27 @@ layout = dbc.Container([
                             persistence = True, persistence_type = 'session', 
                             style={'border-radius':input_style['border-radius']}
                         ),
-                        # VOLUME LOGIC ARGUMENTS - CHECK TCC WHASTAPP GROUP
+                        # VOLUME LOGIC ARGUMENTS
                     ],
                     className="col-xs-1 text-center",           
                     align = 'center',
-                    width = {'size': 8}
                     ), #end info col                
 
+                ], width = {'size': 4}), #end volume col
+                dbc.Col([
                     dbc.Col([ #graph scheme col
                         dcc.Graph(
-                            id='bar_volume_biodigestor',
-                            config={'displayModeBar': False}
+                        id='bar_volume_biodigestor',
+                        config={'displayModeBar': False},
                         ),
                     ],
                     align = 'center',
-                    width = {'size': 4}
-                    ),
-                ], width = {'size': 8}), #end volume col
+                    className="col-xs-1 text-center",
+                    style = {"padding" : "45px"}
+                    ),], 
+                width = {'size': 4}),
             ], 
-            justify="center", style = {'background-color': color_p['grey1'], 'height': '50vh'}, align ='strech'),
+            justify="center", style = {'background-color': color_p['grey1'],"align-content":'center', 'height': '50vh'}, align ='center'),
 #end upper row
 
             # ADVANCED OPTIONS TAB
@@ -202,56 +204,65 @@ layout = dbc.Container([
                     ),
                 ),
                 dbc.Collapse([
-                    dbc.Col([
+                    dbc.Row([
                         # Advanced options: pH input
-                        html.H6(
-                            "pH",
-                            style={"textAlign": "center", 'marginBottom': 4, 'marginTop': 4},
-                        ),
-                        dcc.Input(        
-                            id = 'pH',
+                        dbc.Col([
+                            html.H6(
+                                "pH",
+                                style={"textAlign": "center", 'marginBottom': 4, 'marginTop': 4},
+                            ),
+                            dcc.Input(        
+                                id = 'pH',
+                                type = 'number',
+                                value = 7,
+                                debounce = True,
+                                min = 0 , max = 14, step = 0.1,
+                                required= True,
+                                size = "100",
+                                persistence = True, persistence_type = 'session',
+                                style={'border-radius':input_style['border-radius'],}
+                            ),
+                        ], width = 4),
+                        #Advanced options: dilution input (ADD VALUE BY FORMULA)
+################################################## REMOVE ###############################################################################
+                        dbc.Col([
+                            html.H6(
+                                "Diluição"
+                            ),
+                            dcc.Input(
+                            id = 'dilution',
                             type = 'number',
-                            value = 7,
+                            value = 7, #CHANGE
                             debounce = True,
-                            min = 0 , max = 14, step = 0.1,
+                            min = 0 , max = 10**8, step = 1, #CHANGE
                             required= True,
                             size = "100",
                             persistence = True, persistence_type = 'session',
                             style={'border-radius':input_style['border-radius'],}
-                        ),
-                    ]),
-                        #Advanced options: dilution input (ADD VALUE BY FORMULA)
-                        html.H6(
-                            "Diluição"
-                        ),
-                        dcc.Input(
-                        id = 'dilution',
-                        type = 'number',
-                        value = 7, #CHANGE
-                        debounce = True,
-                        min = 0 , max = 10**8, step = 1, #CHANGE
-                        required= True,
-                        size = "100",
-                        persistence = True, persistence_type = 'session',
-                        style={'border-radius':input_style['border-radius'],}
-                        ),
-
+                            ),
+                        ], width = 4),
+##########################################################################################################################################
                         #Advanced options: Headspace input
-                        html.H6("Parcela Gasosa (%)"),
+                        dbc.Col([
+                            html.H6("Parcela Gasosa (%)"),
+                            dcc.Input(            
+                                id = 'parcela_gas',
+                                type = 'number',
+                                value = 30,
+                                debounce = True,
+                                min = 1 , max = 50, step = 1,
+                                required= True,
+                                size = "100",
+                                persistence = True, persistence_type = 'session', 
+                                style={'border-radius':input_style['border-radius']}
+                                ),
+                        ],
+                        width = 4),
+                        ], align = "start"),
 
-                        dcc.Input(            
-                            id = 'parcela_gas',
-                            type = 'number',
-                            value = 30,
-                            debounce = True,
-                            min = 1 , max = 50, step = 1,
-                            required= True,
-                            size = "100",
-                            persistence = True, persistence_type = 'session', 
-                            style={'border-radius':input_style['border-radius']}
-                        ),
+                        html.Br(),
 
-                        #Advanced options: DQO Slider
+                        #Advanced options: Feed Slider
                         html.H6('Vazão de Alimentação (m³/dia)',
                             className='text-center'
                         ),
@@ -268,6 +279,9 @@ layout = dbc.Container([
                             'placement': 'bottom'},
                         ),
                     ],width=12),
+
+                    html.H6("Fração de DQO (kg DQO/kg massa úmida do substrato)"),
+                    #Advanced options: COD Slider
                     dbc.Col(
                         dcc.Slider( 
                             id = 'slider_DQO',
@@ -288,7 +302,7 @@ layout = dbc.Container([
                 ], 
                 className="col-xs-1 text-center", width = 12),
                 dbc.Col(
-                    html.H4(
+                    html.H6(
                         id='slider_output_container',
                         children=[]
                     )
@@ -310,6 +324,7 @@ layout = dbc.Container([
                 #Dummy
                 html.Div(id='oi')
             ],
+            align = "start",
         style={'height': '50vh', 'background-color': color_p['grey3']}),#end row
     ], style={'height': '100vh', 'background-color': color_p['grey3']})
     #End Main Row

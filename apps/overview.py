@@ -26,8 +26,7 @@ layout = dbc.Container([
                 dbc.Col([
 
                     html.Br(),
-                    html.Br(),
-                    html.Br(),
+
     
                     html.H6(
                         "Eficiência do motogerador (%)",
@@ -85,7 +84,7 @@ layout = dbc.Container([
                         'Atualizar', 
                         id='botao_teste',
                         n_clicks = 0,
-                        style={'background-color': color_p['4green']},
+                        style={'background-color': color_p['4green'],'width' : '180px'},
                     ),
 
                     html.Br(),
@@ -94,9 +93,21 @@ layout = dbc.Container([
                         'Correlação', 
                         id='botao_correlation',
                         n_clicks = 0,
-                        style={'background-color': color_p['4purple']}),
+                        style={'background-color': color_p['4purple'],'width' : '180px'}),
                         href='/results/correlation'
                     ),
+                    html.Br(),
+                    html.Br(),
+
+
+                    dcc.Link(dbc.Button(
+                        'Visão detalhada', 
+                        id='botao_overview',
+                        n_clicks = 0,
+                        style={'background-color': color_p['4purple'], 'width' : '180px'}),
+                        href='/results/dashboard'
+                        ),            
+
                     html.Br(),
                     html.Br(),
 
@@ -104,7 +115,7 @@ layout = dbc.Container([
                         'Retornar a tela inicial', 
                         id='botao_input',
                         n_clicks = 0,
-                        style={'background-color': color_p['4purple']}),
+                        style={'background-color': color_p['4purple'],'width' : '180px'}),
                         href='/'
                     ),
                 ], className="col-xs-1 text-center", align="start", width = 12)

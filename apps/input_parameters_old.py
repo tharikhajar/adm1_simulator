@@ -81,7 +81,7 @@ layout = dbc.Container([
 
         # Parameters Col
         dbc.Col([
-            # Mass and pH
+            # Mass
             #region
             dbc.Row([
                 dbc.Col([
