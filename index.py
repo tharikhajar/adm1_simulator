@@ -276,7 +276,7 @@ def gas_comp(n_clicks):
 
     fig = go.Figure(data=data)
     fig.update_layout(
-        title='Compositação do Biogás (%)',
+        title='Composição do Biogás (%)',
         barmode='stack',
         xaxis=dict(visible=False),
         yaxis=dict(visible=False),

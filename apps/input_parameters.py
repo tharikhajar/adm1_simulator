@@ -222,29 +222,12 @@ layout = dbc.Container([
                                 persistence = True, persistence_type = 'session',
                                 style={'border-radius':input_style['border-radius'],}
                             ),
-                        ], width = 4),
-                        #Advanced options: dilution input (ADD VALUE BY FORMULA)
-################################################## REMOVE ###############################################################################
-                        dbc.Col([
-                            html.H6(
-                                "Diluição"
-                            ),
-                            dcc.Input(
-                            id = 'dilution',
-                            type = 'number',
-                            value = 7, #CHANGE
-                            debounce = True,
-                            min = 0 , max = 10**8, step = 1, #CHANGE
-                            required= True,
-                            size = "100",
-                            persistence = True, persistence_type = 'session',
-                            style={'border-radius':input_style['border-radius'],}
-                            ),
-                        ], width = 4),
-##########################################################################################################################################
+                        ], width = 6),
+                        #Advanced options: dilution input - removed
+
                         #Advanced options: Headspace input
                         dbc.Col([
-                            html.H6("Parcela Gasosa (%)"),
+                            html.H6("Porcentagem do Headspace (%)"),
                             dcc.Input(            
                                 id = 'parcela_gas',
                                 type = 'number',
@@ -257,7 +240,7 @@ layout = dbc.Container([
                                 style={'border-radius':input_style['border-radius']}
                                 ),
                         ],
-                        width = 4),
+                        width = 6),
                         ], align = "start"),
 
                         html.Br(),

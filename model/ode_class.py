@@ -188,7 +188,7 @@ class Simulation:
         h2o_array = np.full((len(p_ch4)), h2o)
 
         h2o_data = Variable(
-            name='Água Gasosa',
+            name='Água (gás)',
             unit='bar',
             vanilla=False,
             color='#023e8a',
