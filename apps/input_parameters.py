@@ -101,7 +101,7 @@ layout = dbc.Container([
                         required= True,
                         size = "50",
                         persistence = True, persistence_type = 'session',
-                        style={'border-radius':input_style['border-radius']}          
+                        style={'border-radius':input_style['border-radius'], 'text-align':'start'}          
                     ),
                 ], 
                 className="col-xs-1 text-center", 
@@ -120,7 +120,8 @@ layout = dbc.Container([
                         html.Br(),
 
                         html.H6(
-                            "Volume do Headspace (m³)"
+                            "Volume do Headspace (m³)",
+                            id = 'headspacetooltip',
                         ),
                         dcc.Input(            
                             id = 'Volume_Headspace',
@@ -131,9 +132,20 @@ layout = dbc.Container([
                             required= True,
                             size = "100",
                             persistence = True, persistence_type = 'session', 
-                            style={'border-radius':input_style['border-radius']},
+                            style={'border-radius':input_style['border-radius'], 'text-align':'start',},
                             readOnly = True
                         ),
+
+                        dbc.Tooltip(
+                            "Headspace é o volume dedicado para o gás dentro do biodigestor."
+                            " Para alterar, acesse a aba de opções avançadas abaixo.",
+                            target="headspacetooltip",
+                         ),
+                        dbc.Tooltip(
+                            "Headspace é o volume dedicado para o gás dentro do biodigestor."
+                            " Para alterar, acesse a aba de opções avançadas abaixo.",
+                            target="Volume_Headspace",
+                         ),                         
 
                         html.Br(),
                         html.Br(),
@@ -168,7 +180,7 @@ layout = dbc.Container([
                             required= True,
                             size = "100",
                             persistence = True, persistence_type = 'session', 
-                            style={'border-radius':input_style['border-radius']}
+                            style={'border-radius':input_style['border-radius'], 'text-align':'start',}
                         ),
                         # VOLUME LOGIC ARGUMENTS
                     ],
@@ -220,7 +232,7 @@ layout = dbc.Container([
                                 required= True,
                                 size = "100",
                                 persistence = True, persistence_type = 'session',
-                                style={'border-radius':input_style['border-radius'],}
+                                style={'border-radius':input_style['border-radius'], 'text-align':'start',}
                             ),
                         ], width = 6),
                         #Advanced options: dilution input - removed
@@ -237,7 +249,7 @@ layout = dbc.Container([
                                 required= True,
                                 size = "100",
                                 persistence = True, persistence_type = 'session', 
-                                style={'border-radius':input_style['border-radius']}
+                                style={'border-radius':input_style['border-radius'], 'text-align':'start',}
                                 ),
                         ],
                         width = 6),
