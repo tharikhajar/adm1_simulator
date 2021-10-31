@@ -35,7 +35,7 @@ layout = dbc.Container([
                     dcc.Input(
                         id='generator_efficiency_input',
                         type='number',
-                        value=.32, min=0, max=1, step=0.01, debounce=True,
+                        value=32, min=0, max=100, step=1, debounce=True,
                         style={"width": 230, "height": 30, 'text-align': 'center', 'border-radius':input_style['border-radius']},
                     ),
                 ], align = 'center'),
@@ -106,7 +106,7 @@ layout = dbc.Container([
                             id='botao_overview',
                             n_clicks = 0,
                             style={'background-color': color_p['4purple'],'width' : '180px'}),
-                            href='/results/overview'
+                            href='/results'
                         ),
 
                     html.Br(),
@@ -128,6 +128,10 @@ layout = dbc.Container([
 
         #Simulation Results Col
         dbc.Col([
+            dcc.Loading(
+            id='loading_dashboard',
+            type='graph',
+            children=[
             #region
             dbc.Row([
                 #Title
@@ -181,6 +185,7 @@ layout = dbc.Container([
                         id='area_chart'),
                 className="col-xs-1 text-center", align="center", width = 12)
             ])
+        ])
         ],
         width = 10, 
         style={'height': '100vh'},

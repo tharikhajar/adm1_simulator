@@ -93,8 +93,8 @@ def update_output(dillution_rate, mass, V, V_type, parc_gas):
     HRT = round(V_liq / dillution_rate, 1)
     text_return = 'A concentração da alimentação é de {} kg de substrato por m³. O tempo de retenção hidráulica é de {} dias'.format(round(concentration, 2), HRT)
 
-    F_min = V_liq / 1000
-    F_max = V_liq/10
+    F_min = round(V_liq / 1000, 2)
+    F_max = round(V_liq/10, 2)
     color = '#000000'
     marks = {
         F_min: {'label': "{}".format(F_min),
@@ -166,13 +166,12 @@ def plot_biodigestor_volume(V, V_type, parc_gas):
 @app.callback(Output('oi', 'children'),
     [Input('botao_simular', 'n_clicks')],
     [State('slider_DQO', 'value'),
-    State('pH', 'value'),
     State('massa_dia', 'value'),
     State('Volume_Input', 'value'),
     State('parcela_gas', 'value'),
     State('slider_diluição', 'value'),
     State('selecao_volume', 'value')])
-def simulate_test(n_clicks, DQO, pH, mass, V, parc_gas, dillution_rate, V_type):
+def simulate_test(n_clicks, DQO, mass, V, parc_gas, dillution_rate, V_type):
 
     parc_gas = parc_gas / 100
     if V_type == 'total':
@@ -184,7 +183,7 @@ def simulate_test(n_clicks, DQO, pH, mass, V, parc_gas, dillution_rate, V_type):
 
 
     simulation.set_simulation_status(status=0)
-    simulation.update_parameters(DQO, pH, dillution_rate, V_liq, V_gas, mass)
+    simulation.update_parameters(DQO, dillution_rate, V_liq, V_gas, mass)
     simulation.calculate_parameters()
     simulation.simulate()
     simulation.calculate_gas_flow_rate()
@@ -209,7 +208,9 @@ def plot_time_series(n_clicks):
     while t_init < 1:
         t_init_index += 1
         t_init = t[t_init_index]
-        
+
+    variable_data = simulation.data['q_gas']
+    y_max = 1.05 * max(variable_data.values[t_init_index:])
     
     for variable in ['q_gas', 'q_metane']:
         variable_data = simulation.data[variable]
@@ -229,7 +230,7 @@ def plot_time_series(n_clicks):
         )
         fig.add_trace(
             go.Scatter(
-                x=[steady_time, steady_time], y=[min(y[t_init_index:]), max(y[t_init_index:])], 
+                x=[steady_time, steady_time], y=[0, y_max], 
                 name= 'Estado Estacionário para: ' + variable_name, marker = dict(color=color),
                 mode='lines', line = dict(dash='dash')
                 )
@@ -238,6 +239,7 @@ def plot_time_series(n_clicks):
     fig.update_xaxes(title_text='Tempo (dias)')
 
     fig.update_layout(
+        yaxis_range=[0, y_max],
         height=400,
         hovermode='x unified',
         margin=dict(
@@ -283,7 +285,7 @@ def gas_comp(n_clicks):
         legend=dict(
             orientation='h',
             yanchor='top',
-            y=-0.5,
+            y=-0.1,
             xanchor='left',
             x=0
         ),
@@ -292,7 +294,7 @@ def gas_comp(n_clicks):
         margin=dict(
             l=15,
             r=15,
-            b=15,
+            b=10,
             t=40,
             pad=5
         ),
@@ -321,7 +323,7 @@ def gas_comp(n_clicks):
 
     labels = ['DQO na Saída', 'DQO na Alimentação']
     vals = [final_dqo, feed_dqo]
-    text = [f'{label}: {round(val,2)} kg DQO/m-3' for label, val in zip(labels, vals)]
+    text = [f'{label}: {round(val,2)} kg DQO/m³' for label, val in zip(labels, vals)]
     colors = ['#656d4a', '#414833']
     fig = go.Figure(go.Bar(
         x=vals, y=labels,
@@ -530,6 +532,8 @@ def reset_simulation(n_clicks):
 def financial_calculation(generator_efficiency, energy_price):
     while simulation.simulation_status == 0:
         time.sleep(.1)
+
+    generator_efficiency = generator_efficiency * 0.01
     simulation.calculate_financial_value(energy_price=energy_price, generator_efficiency=generator_efficiency)
     monthly_energy = round(simulation.monthly_energy,0)
     monthly_savings = round(simulation.monthly_savings, 2)

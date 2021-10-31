@@ -61,12 +61,11 @@ class Simulation:
         self.DQO_initial_condition = param['DQO_initial_condition']
         self.BSM2_results = BSM2_results
 
-    def update_parameters(self, DQO, pH, dillution_rate, V_liq, V_gas, mass):
+    def update_parameters(self, DQO, dillution_rate, V_liq, V_gas, mass):
         ''' Update object based on user input
         '''
 
         self.DQO = DQO
-        self.pH = pH
         self.dillution_rate = dillution_rate
         self.V_liq = V_liq
         self.V_gas = V_gas
@@ -131,7 +130,8 @@ class Simulation:
         steady_states = []
 
         for variable in self.data.keys():
-            self.data[variable].find_steady_state()
+
+            #self.data[variable].find_steady_state()
             steady_index = self.data[variable].find_steady_state()
             steady_states.append(steady_index)
 

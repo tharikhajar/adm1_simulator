@@ -49,7 +49,7 @@ class Variable():
             average_end = (self.values[i] + self.values[-1]) / 2
             difference_to_the_end = abs(self.values[i] - self.values[-1]) / average_end
 
-            if biggest_difference <= 0.00001 and difference_to_the_end <= 0.001:
+            if biggest_difference <= 0.001 and difference_to_the_end <= 0.01:
                 self.steady_index = i
                 return i
 

@@ -191,10 +191,13 @@ layout = dbc.Container([
                 ], width = {'size': 4}), #end volume col
                 dbc.Col([
                     dbc.Col([ #graph scheme col
+                        dcc.Loading(id='loading_volume',
+                        type='circle',
+                        children=[
                         dcc.Graph(
                         id='bar_volume_biodigestor',
                         config={'displayModeBar': False},
-                        ),
+                        )]),
                     ],
                     align = 'center',
                     className="col-xs-1 text-center",
@@ -217,26 +220,6 @@ layout = dbc.Container([
                 ),
                 dbc.Collapse([
                     dbc.Row([
-                        # Advanced options: pH input
-                        dbc.Col([
-                            html.H6(
-                                "pH",
-                                style={"textAlign": "center", 'marginBottom': 4, 'marginTop': 4},
-                            ),
-                            dcc.Input(        
-                                id = 'pH',
-                                type = 'number',
-                                value = 7,
-                                debounce = True,
-                                min = 0 , max = 14, step = 0.1,
-                                required= True,
-                                size = "100",
-                                persistence = True, persistence_type = 'session',
-                                style={'border-radius':input_style['border-radius'], 'text-align':'start',}
-                            ),
-                        ], width = 6),
-                        #Advanced options: dilution input - removed
-
                         #Advanced options: Headspace input
                         dbc.Col([
                             html.H6("Porcentagem do Headspace (%)"),
@@ -252,7 +235,7 @@ layout = dbc.Container([
                                 style={'border-radius':input_style['border-radius'], 'text-align':'start',}
                                 ),
                         ],
-                        width = 6),
+                        width = 12),
                         ], align = "start"),
 
                         html.Br(),

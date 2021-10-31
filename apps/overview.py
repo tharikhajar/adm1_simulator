@@ -17,8 +17,10 @@ from app import app
 
 layout = dbc.Container([
     #Main Row
+    dcc.Loading(id='overview_full', type='graph', children=[
     dbc.Row([
         #Financial Values Col
+        
         #region
         dbc.Col([
             dbc.Row([
@@ -35,7 +37,7 @@ layout = dbc.Container([
                     dcc.Input(
                         id='generator_efficiency_input',
                         type='number',
-                        value=.32, min=0, max=1, step=0.01, debounce=True,
+                        value=32, min=0, max=100, step=1, debounce=True,
                         style={"width": 230, "height": 30, 'text-align': 'center', 'border-radius':input_style['border-radius']},
                     ),
                 ], align = 'center'),
@@ -158,7 +160,9 @@ layout = dbc.Container([
         style={'height': '100vh'},
         align='center',
         ),
+    
         #endregion
     ]),
+    ])
 #End Main Row    
 ], fluid=True)
