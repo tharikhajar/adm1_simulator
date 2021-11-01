@@ -537,8 +537,9 @@ def financial_calculation(generator_efficiency, energy_price):
     simulation.calculate_financial_value(energy_price=energy_price, generator_efficiency=generator_efficiency)
     monthly_energy = round(simulation.monthly_energy,0)
     monthly_savings = round(simulation.monthly_savings, 2)
-    steady_state_finder =round(simulation.data['S_gas_ch4'].find_steady_state())
-    return f'• {monthly_energy} kWh gerados por mês • Economia de R${monthly_savings} ao mês • Estado estacionário em {steady_state_finder}'
+    T_index = simulation.data['q_metane'].find_steady_state()
+    steady_state_finder =round(simulation.t[T_index])
+    return f'• {monthly_energy} kWh gerados por mês • Economia de R${monthly_savings} ao mês • Estado estacionário em {steady_state_finder} dias'
 #endregion
 
 #Correlation page callbacks

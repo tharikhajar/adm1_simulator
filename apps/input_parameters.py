@@ -79,7 +79,7 @@ layout = dbc.Container([
             html.Div([
                 html.H6(''' Contato dos desenvolvedores''', 
                 style = {'textAlign': 'left', 'color': 'white', 'fontSize': 16 }),
-                html.H6('''Fernando Falat Rangel • fefalat@yahoo.com.br''', 
+                html.H6('''Fernando Falat Rangel • fernandofalat@protonmail.com''', 
                 style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 }),
                 html.H6('Miguel Lopes Alcântara • miguel.l.alcantara@outlook.com', 
                 style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 }),
