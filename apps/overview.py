@@ -72,9 +72,11 @@ layout = dbc.Container([
 
                 #Financial overview text
                 dbc.CardHeader(
-                    html.Div(id = 'monthly_savings_div', 
-                    style = {"color": "black", "textAlign": "center"}),
+                    html.Div(id = 'monthly_savings_div',
+                    style = {"color": "black", "textAlign": "left"}),
                 ),
+                dbc.Tooltip("Não são contabilizados impostos incidentes sobre a compensação de energia elétrica.",
+                    target= 'monthly_savings_div'),
                 #Buttons
                 dbc.Col([
 
@@ -86,7 +88,7 @@ layout = dbc.Container([
                         'Atualizar', 
                         id='botao_teste',
                         n_clicks = 0,
-                        style={'background-color': color_p['4green'],'width' : '180px'},
+                        style={'display': 'none', 'background-color': color_p['4green'],'width' : '180px'},
                     ),
 
                     html.Br(),
@@ -117,7 +119,7 @@ layout = dbc.Container([
                         'Retornar a tela inicial', 
                         id='botao_input',
                         n_clicks = 0,
-                        style={'background-color': color_p['4purple'],'width' : '180px'}),
+                        style={'background-color': color_p['4green'],'width' : '180px'}),
                         href='/'
                     ),
                 ], className="col-xs-1 text-center", align="start", width = 12)

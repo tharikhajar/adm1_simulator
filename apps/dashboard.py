@@ -71,7 +71,7 @@ layout = dbc.Container([
                 #Financial overview text
                 dbc.CardHeader(
                     html.Div(id = 'monthly_savings_div', 
-                    style = {"color": "black", "textAlign": "center"}),
+                    style = {"color": "black", "textAlign": "left"}),
                 ),
                 #Buttons
                 dbc.Col([
@@ -84,7 +84,7 @@ layout = dbc.Container([
                         'Atualizar', 
                         id='botao_teste_2',
                         n_clicks = 0,
-                        style={'background-color': color_p['4green'],'width' : '180px'},
+                        style={'display': 'none', 'background-color': color_p['4green'],'width' : '180px'},
                     ),
 
                     html.Br(),
@@ -116,7 +116,7 @@ layout = dbc.Container([
                         'Retornar a tela inicial', 
                         id='botao_input',
                         n_clicks = 0,
-                        style={'background-color': color_p['4purple'],'width' : '180px'},
+                        style={'background-color': color_p['4green'],'width' : '180px'},
                         size = 'md'),
                     href='/',
                         

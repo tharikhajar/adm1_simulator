@@ -321,7 +321,7 @@ def gas_comp(n_clicks):
             val = data[variable].values[-1]
             final_dqo += val
 
-    labels = ['DQO na Saída', 'DQO na Alimentação']
+    labels = ['Concentração de DQO na Saída', 'Concentração de DQO na Alimentação']
     vals = [final_dqo, feed_dqo]
     text = [f'{label}: {round(val,2)} kg DQO/m³' for label, val in zip(labels, vals)]
     colors = ['#656d4a', '#414833']
@@ -537,7 +537,8 @@ def financial_calculation(generator_efficiency, energy_price):
     simulation.calculate_financial_value(energy_price=energy_price, generator_efficiency=generator_efficiency)
     monthly_energy = round(simulation.monthly_energy,0)
     monthly_savings = round(simulation.monthly_savings, 2)
-    return f'{monthly_energy} kWh gerados por mês, resultando em uma economia de R$ {monthly_savings} ao mês.'
+    steady_state_finder =round(simulation.data['S_gas_ch4'].find_steady_state())
+    return f'• {monthly_energy} kWh gerados por mês • Economia de R${monthly_savings} ao mês • Estado estacionário em {steady_state_finder}'
 #endregion
 
 #Correlation page callbacks

@@ -16,27 +16,84 @@ layout = dbc.Container([
     #Main Row
     dbc.Row([
         dbc.Col([
+            html.Br(),
+            html.H6('''Correlação entre as variáveis do modelo'''),
+            html.Br(),
+            html.Br(),
+            html.H6 ('''Selecione a variável que será comparada pela lista ao lado e observe a correlação
+             de acordo com o mapa de calor logo abaixo.''' , style = {'fontSize': 14,'textAlign': 'justify'}), 
+            html.H6('''Ao selecionar uma variável do mapa de calor, um gráfico mostrando a correlação entre as 
+            duas variáveis e um gráfico de dispersão serão plotados.''' , style = {'fontSize': 14, 'textAlign': 'justify'}),
+            html.Br(),
+            html.Br(),
+            html.Br(),
+            html.Br(),
+            html.Br(),
+            html.Br(),
+            html.Br(),
+            html.Br(),
+            html.Br(),
+            html.Br(),
+
+            dbc.Button(
+                'Atualizar', 
+                id='botao_teste',
+                n_clicks = 0,
+                style={'display': 'none', 'background-color': color_p['4green'],'width' : '180px'},
+            ),
+            html.Br(),
+            html.Br(),
+            dcc.Link(dbc.Button(
+                'Visão geral', 
+                id='botao_correlation',
+                n_clicks = 0,
+                style={'background-color': color_p['4purple'],'width' : '180px'}),
+                href='/results'
+            ),
+            html.Br(),
+            html.Br(),
+            dcc.Link(dbc.Button(
+                'Visão detalhada', 
+                id='botao_overview',
+                 n_clicks = 0,
+                style={'background-color': color_p['4purple'], 'width' : '180px'}),
+                href='/results/dashboard'
+                        ),            
+
+            html.Br(),
+            html.Br(),
+
+            dcc.Link(dbc.Button(
+                'Retornar a tela inicial', 
+                id='botao_input',
+                n_clicks = 0,
+                style={'background-color': color_p['4green'],'width' : '180px'}),
+                href='/'
+            ),
+        ], className="col-xs-1 text-center", width = 2, style={'height': '100vh', 'background-color': color_p['grey3']}),        
+        dbc.Col([
             dcc.Dropdown(
                 id='correlation_target',
                 options=[],
                 value='S_gas_ch4',
                 searchable=True,
-                style=dict(width='90%'),
+                style=dict(width='100%'),
             ),
             dcc.Graph(
                 id='correlation_heatmap'
             )
-        ], width=4),
+        ],className="col-xs-1 text-center", style={'height': '100vh',}, width=4),
         dbc.Col([
             dcc.Graph(id='correlation_time_series'),
             dcc.Graph(id='correlation_scatter')
-        ], width=8),
+        ], width=6),
         
 
         dbc.Button(
             'Dummy',
             id='dummy_corr',
-            n_clicks=0
+            n_clicks=0,
+            style = {'display': 'none'}
         )
     ]),
 #End Main Row    
