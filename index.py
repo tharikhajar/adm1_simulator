@@ -94,7 +94,11 @@ def update_output(dillution_rate, mass, V, V_type, parc_gas):
     text_return = 'A concentração da alimentação é de {} kg de substrato por m³. O tempo de retenção hidráulica é de {} dias'.format(round(concentration, 2), HRT)
 
     F_min = round(V_liq / 1000, 2)
-    F_max = round(V_liq/10, 2)
+    
+    if F_min < 0.01:
+        F_min = 0.01
+
+    F_max = round(V_liq/2, 2)
     color = '#000000'
     marks = {
         F_min: {'label': "{}".format(F_min),

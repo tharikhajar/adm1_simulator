@@ -26,7 +26,7 @@ from assets.style import color_p, input_style
 DQO = 125 # kg/DQO parameters
 pH = 7 
 massa_dia = 3 #kg/m³
-V_digestor = 80 # m³
+V_digestor = 1000 # m³
 
 
 # Layout
@@ -109,7 +109,7 @@ layout = dbc.Container([
                     dcc.Input(            
                         id = 'massa_dia',
                         type = 'number',
-                        value = 250,
+                        value = 20000,
                         debounce = True,
                         min = 0 , max = 10**7, step = 1,
                         required= True,
@@ -140,7 +140,7 @@ layout = dbc.Container([
                         dcc.Input(            
                             id = 'Volume_Headspace',
                             type = 'number',
-                            value = 30,
+                            value = 300,
                             debounce = True,
                             min = 0 , max = 10**6, step = 1,
                             required= True,
@@ -188,7 +188,7 @@ layout = dbc.Container([
                         dcc.Input(            
                             id = 'Volume_Input',
                             type = 'number',
-                            value = V_digestor,
+                            value = 1300,
                             debounce = True,
                             min = 0 , max = 10**6, step = 1,
                             required= True,
@@ -240,9 +240,9 @@ layout = dbc.Container([
                             dcc.Input(            
                                 id = 'parcela_gas',
                                 type = 'number',
-                                value = 30,
+                                value = 23,
                                 debounce = True,
-                                min = 1 , max = 50, step = 1,
+                                min = 15 , max = 35, step = 1,
                                 required= True,
                                 size = "100",
                                 persistence = True, persistence_type = 'session', 
@@ -261,10 +261,10 @@ layout = dbc.Container([
                         dbc.Col([
                             dcc.Slider( 
                             id = 'slider_diluição',
-                            min = 1,
-                            max = 1000,
+                            min = 0.01,
+                            max = 100000,
                             step = 0.01,
-                            value = 50,
+                            value = 170,
                             persistence = True, persistence_type = 'session',
                             tooltip={
                             'always_visible': True,
@@ -280,7 +280,7 @@ layout = dbc.Container([
                             min = 0.1,
                             max = 1,
                             step = 0.01,
-                            value = 0.7,
+                            value = 0.48,
                             persistence = True, persistence_type = 'session',
                             tooltip={
                                 'always_visible': True,
