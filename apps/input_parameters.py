@@ -74,17 +74,16 @@ layout = dbc.Container([
 
             html.Br(),
             html.Br(),
-            html.Br(),
-
+            
             html.Div([
                 html.H6(''' Contato dos desenvolvedores''', 
                 style = {'textAlign': 'left', 'color': 'white', 'fontSize': 16 }),
-                html.H6('''Fernando Falat Rangel • fernandofalat@protonmail.com''', 
-                style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 }),
-                html.H6('Miguel Lopes Alcântara • miguel.l.alcantara@outlook.com', 
-                style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 }),
-                html.H6('Tharik de Oliveira Hajar • tharikhajar@gmail.com',
-                style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 }),
+                html.H6(html.Label(['Fernando Falat Rangel • ', html.A('LinkedIn', href='https://www.linkedin.com/in/fernandofalat/',
+                style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 })], style = {'fontSize': 12})),
+                html.H6(html.Label(['Miguel Lopes Alcântara • ', html.A('LinkedIn', href='https://www.linkedin.com/in/miguel-l-alcantara/',
+                style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 })], style = {'fontSize': 12})),                
+                html.H6(html.Label(['Tharik de Oliveira Hajar • ', html.A('LinkedIn', href='https://www.linkedin.com/in/tharik-hajar-7b6248140/',
+                style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 })], style = {'fontSize': 12})),      
             ])
         ],  width={'size': 4,},
             align='center',

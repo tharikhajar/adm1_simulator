@@ -20,10 +20,13 @@ layout = dbc.Container([
             html.H6('''Correlação entre as variáveis do modelo'''),
             html.Br(),
             html.Br(),
+
             html.H6 ('''Selecione a variável que será comparada pela lista ao lado e observe a correlação
              de acordo com o mapa de calor logo abaixo.''' , style = {'fontSize': 14,'textAlign': 'justify'}), 
             html.H6('''Ao selecionar uma variável do mapa de calor, um gráfico mostrando a correlação entre as 
             duas variáveis e um gráfico de dispersão serão plotados.''' , style = {'fontSize': 14, 'textAlign': 'justify'}),
+            html.H6('''Clique e arraste uma área no gráfico para dar zoom e analisar pontos específicos, de um clique duplo no gráfico para retornar ao zoom original''' , style = {'fontSize': 14, 'textAlign': 'justify'}),
+
             html.Br(),
             html.Br(),
             html.Br(),

@@ -530,7 +530,9 @@ def reset_simulation(n_clicks):
     simulation.set_simulation_status(status=0)
     return ''
 
-@app.callback(Output('monthly_savings_div', 'children'), 
+@app.callback([Output('monthly_energy_div', 'children'),
+    Output('monthly_savings_div', 'children'),
+    Output('steady_state_div', 'children')],
     [Input('generator_efficiency_input', 'value'),
     Input('energy_price_input', 'value')])
 def financial_calculation(generator_efficiency, energy_price):
@@ -543,7 +545,10 @@ def financial_calculation(generator_efficiency, energy_price):
     monthly_savings = round(simulation.monthly_savings, 2)
     T_index = simulation.data['q_metane'].find_steady_state()
     steady_state_finder =round(simulation.t[T_index])
-    return f'• {monthly_energy} kWh gerados por mês • Economia de R${monthly_savings} ao mês • Estado estacionário em {steady_state_finder} dias'
+    monthly_energy_string = f'{monthly_energy} kWh gerados por mês.'
+    monthly_savings_string = f'Economia de R${monthly_savings} ao mês.'
+    steady_state_string = f'Estado estacionário em {steady_state_finder} dias.'
+    return monthly_energy_string, monthly_savings_string, steady_state_string
 #endregion
 
 #Correlation page callbacks

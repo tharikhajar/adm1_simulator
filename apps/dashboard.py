@@ -70,9 +70,19 @@ layout = dbc.Container([
 
                 #Financial overview text
                 dbc.CardHeader(
-                    html.Div(id = 'monthly_savings_div', 
-                    style = {"color": "black", "textAlign": "left"}),
+                    html.Div(id = 'monthly_energy_div',
+                    style = {"color": "black", "textAlign": "center", 'fontSize': 24}),
                 ),
+                dbc.CardHeader(
+                    html.Div(id = 'monthly_savings_div',
+                    style = {"color": "black", "textAlign": "center", 'fontSize': 24}),
+                ),
+                dbc.CardHeader(           
+                    html.Div(id = 'steady_state_div',
+                    style = {"color": "black", "textAlign": "center", 'fontSize': 24}),                            
+                ),
+                dbc.Tooltip("Não são contabilizados impostos incidentes sobre a compensação de energia elétrica.",
+                    target= 'monthly_savings_div'),
                 #Buttons
                 dbc.Col([
 
