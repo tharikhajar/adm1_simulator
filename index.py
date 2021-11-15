@@ -681,11 +681,12 @@ def test_clickData(clickData, variable_1):
     fig.update_layout(
         height=400,
         hovermode='x unified',
+        title='Derivada (dt) ao longo do tempo',
         margin=dict(
             l=15,
             r=15,
             b=15,
-            t=15,
+            t=30,
             pad=5
         )
     )
@@ -695,6 +696,25 @@ def test_clickData(clickData, variable_1):
         y=simulation.data[variable_2].derivative,
         mode='markers'
     ))
+
+    var1_name = simulation.data[variable_1].name
+    var1_unit = simulation.data[variable_1].unit
+
+    var2_name = simulation.data[variable_2].name
+    var2_unit = simulation.data[variable_2].unit
+
+    fig_scatter.update_layout(
+        xaxis=dict(title=var1_name + ' (' + var1_unit + ' / dias)'),
+        yaxis=dict(title=var2_name + ' (' + var2_unit + ' / dias)'),
+        title=f'Gráfico de Dispersão {var1_name} vs {var2_name}',
+        margin=dict(
+            l=30,
+            r=30,
+            b=30,
+            t=30,
+            pad=10
+        )
+    )
 
     return fig, fig_scatter
 

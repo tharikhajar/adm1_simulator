@@ -25,7 +25,7 @@ layout = dbc.Container([
              de acordo com o mapa de calor logo abaixo.''' , style = {'fontSize': 14,'textAlign': 'justify'}), 
             html.H6('''Ao selecionar uma variável do mapa de calor, um gráfico mostrando a correlação entre as 
             duas variáveis e um gráfico de dispersão serão plotados.''' , style = {'fontSize': 14, 'textAlign': 'justify'}),
-            html.H6('''Clique e arraste uma área no gráfico para dar zoom e analisar pontos específicos, de um clique duplo no gráfico para retornar ao zoom original''' , style = {'fontSize': 14, 'textAlign': 'justify'}),
+            html.H6('''Clique e arraste uma área no gráfico para dar zoom e analisar pontos específicos, dê um clique duplo no gráfico para retornar ao zoom original''' , style = {'fontSize': 14, 'textAlign': 'justify'}),
 
             html.Br(),
             html.Br(),
@@ -87,6 +87,7 @@ layout = dbc.Container([
             )
         ],className="col-xs-1 text-center", style={'height': '100vh',}, width=4),
         dbc.Col([
+            html.Br(),
             dcc.Graph(id='correlation_time_series'),
             dcc.Graph(id='correlation_scatter')
         ], width=6),
