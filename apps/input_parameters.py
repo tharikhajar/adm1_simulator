@@ -39,13 +39,13 @@ layout = dbc.Container([
         dbc.Col([
         #region
             html.H2('''
-            Simulador de Biodigestão Anaeróbica
+            GADS • Simulador Gráfico de Biodigestão Anaeróbica
             ''', style={"textAlign": "center"}),
 
             html.Br(),
 
             html.H6('''
-            Este programa simula a biodigestão anaeróbia pelo modelo ADM1, retornando diversas viaráveis cálculadas pelo modelo, 
+            O software GADS (Graphical Anaerobic Digestion Simulator) simula a biodigestão anaeróbia pelo modelo ADM1, retornando diversas viaráveis cálculadas pelo modelo, 
             como a produção de biogás, além de retornar uma estimativa econômica.''', style={"textAlign": "justify"}),
                 
             html.Br(),
@@ -73,13 +73,14 @@ layout = dbc.Container([
             , style={"textAlign": "center"}),
 
             html.Br(),
-            html.Br(),
-            
+
             html.Div([
                 html.H6(''' Contato dos desenvolvedores''', 
                 style = {'textAlign': 'left', 'color': 'white', 'fontSize': 16 }),
                 html.H6(html.Label(['Fernando Falat Rangel • ', html.A('LinkedIn', href='https://www.linkedin.com/in/fernandofalat/',
                 style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 })], style = {'fontSize': 12})),
+                html.H6(html.Label(['Maura Harumi Sugai Guérios • ', html.A('LinkedIn', href='https://www.linkedin.com/in/maura-sugai-gu%C3%A9rios-765b2226/',
+                style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 })], style = {'fontSize': 12})),                
                 html.H6(html.Label(['Miguel Lopes Alcântara • ', html.A('LinkedIn', href='https://www.linkedin.com/in/miguel-l-alcantara/',
                 style = {'textAlign': 'left', 'color': 'white', 'fontSize': 12 })], style = {'fontSize': 12})),                
                 html.H6(html.Label(['Tharik de Oliveira Hajar • ', html.A('LinkedIn', href='https://www.linkedin.com/in/tharik-hajar-7b6248140/',
@@ -89,7 +90,7 @@ layout = dbc.Container([
             align='center',
             className='text-white',
             style={
-                'height': '100vh',
+                'height': '110vh',
                 'background-color': color_p['4green']}),
         #endregion
         # Text Col End
@@ -317,7 +318,7 @@ layout = dbc.Container([
             ],
             align = "start",
         style={'height': '50vh', 'background-color': color_p['grey3']}),#end row
-    ], style={'height': '100vh', 'background-color': color_p['grey3']})
+    ], style={'height': '110vh', 'background-color': color_p['grey3']})
     #End Main Row
 ])
 ], fluid=True)
