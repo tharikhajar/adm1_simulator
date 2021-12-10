@@ -39,14 +39,14 @@ layout = dbc.Container([
         dbc.Col([
         #region
             html.H2('''
-            GADS • Simulador Gráfico de Biodigestão Anaeróbica
+            Simulador Gráfico de Biodigestão Anaeróbica
             ''', style={"textAlign": "center"}),
 
             html.Br(),
 
             html.H6('''
-            O software GADS (Graphical Anaerobic Digestion Simulator) simula a biodigestão anaeróbia pelo modelo ADM1, retornando diversas viaráveis cálculadas pelo modelo, 
-            como a produção de biogás, além de retornar uma estimativa econômica.''', style={"textAlign": "justify"}),
+            O software GADS (Graphical Anaerobic Digestion Simulator) simula a biodigestão anaeróbia de efluentes domésticos pelo modelo ADM1/BSM2, retornando diversas variáveis calculadas pelo modelo, 
+            como a produção de biogás, além de retornar uma estimativa de retorno financeiro baseado na energia elétrica gerada.''', style={"textAlign": "justify"}),
                 
             html.Br(),
 
@@ -59,16 +59,15 @@ layout = dbc.Container([
             html.Br(),
 
             html.H6('''
-            As equações, parâmetros e variáveis se baseiam no modelo ADM1, desenvolvido pelo grupo IWA, e foram retiradas do artigo técnico de 
-            ROSEN, C. e JEPPSSON, U "Aspects on ADM1 Implementation within the BSM2 Framework. Technical report" de Maio de 2006, que abordou a
-            implementação do modelo matemático ADM1 para efluentes domésticos. 
+            As equações, parâmetros e variáveis se baseiam no modelo ADM1 modificado por ROSEN, C. e JEPPSSON, U. no relatório técnico "Aspects on ADM1 Implementation within the BSM2 Framework. Technical report" 
+            de Maio de 2006, que abordou a implementação do modelo matemático ADM1 para efluentes domésticos. 
             ''', 
             style={"textAlign": "justify"}),
 
             html.Br(),
 
             html.H6(
-            html.Label(['Download do Artigo: ', html.A('Lund University', href='https://www.lunduniversity.lu.se/lup/publication/ae051f12-f038-47d4-9873-1eacad310c27',
+            html.Label(['Download do Relatório Técnico: ', html.A('Lund University', href='https://www.lunduniversity.lu.se/lup/publication/ae051f12-f038-47d4-9873-1eacad310c27',
             style = {"color": '#2F183C'})])
             , style={"textAlign": "center"}),
 
